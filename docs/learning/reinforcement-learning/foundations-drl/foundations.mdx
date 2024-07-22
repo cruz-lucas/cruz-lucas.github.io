@@ -1,39 +1,9 @@
 ---
-title: Foundations of Deep Reinforcement Learning
-author: Lucas Cruz
-date: 2024-06-14
-category: reinforcement-learning
-layout: post
-permalink: /foundations-drl
+title: Foundations of RL
+sidebar_position: 2
 ---
 
-{% include admonition.html type="info" title="Info" body="
-This content is a direct translation of the [Foundations of Deep RL](https://www.youtube.com/playlist?list=PLwRJQ4m4UJjNymuBM9RdmB3Z9N5-0IlY0) lecture series, from professor Pieter Abbeel's YouTube channel.
-
-For a more detailed coverage of the topics, **I highly recommend watching the original videos.**
-
-This lecture series is designed to **build a strong foundation in deep reinforcement learning**, enabling students to understand current developments and pursue their own research and applications in this exciting field.
-" %}
-
-{% include admonition.html type="abstract" title="Table of Contents" body="
-
-- [Lecture 1: Foundations on Reinforcement Learning](#lecture-1-foundations-on-reinforcement-learning)
-  - [Motivation](#motivation)
-  - [Markov Decision Processes (MDPs)](#markov-decision-processes-mdps)
-  - [Exact Solution Methods](#exact-solution-methods)
-    - [Value Iteration](#value-iteration)
-    - [Policy Iteration](#policy-iteration)
-  - [Maximum Entropy Formulation](#maximum-entropy-formulation)
-- [Deep Q-Learning](#deep-q-learning)
-- [Policy Gradients and Advantage Estimation](#policy-gradients-and-advantage-estimation)
-- [TRPO and PPO](#trpo-and-ppo)
-- [DDPG and SAC](#ddpg-and-sac)
-- [Model-based RL](#model-based-rl)
-
-" %}
-
-
-# Lecture 1: Foundations on Reinforcement Learning
+# Foundations of Reinforcement Learning
 
 This lecture covers Markov Decision Processes (MDPs) and exact solution methods, laying the groundwork for understanding key concepts. We'll define the main components of MDPs—states, actions, transition probabilities, and rewards—and look at exact solution methods like dynamic programming. While these methods work well for small-scale problems, they don't scale effectively to larger ones, pointing to the need for advanced techniques that we'll discuss in later lectures. We'll also introduce the maximum entropy formulation, an approach that improves exploration and robustness in reinforcement learning (RL) agents.
 
@@ -55,12 +25,12 @@ RL operates within the framework of Markov Decision Processes (MDPs). This frame
 
 In an MDP, the agent's interaction cycle involves observing the current state, taking an action, and receiving a reward based on the new state. This reward assesses how favorable the new state is. For example, in a video game, the score might serve as the reward, while for a running robot, the distance covered could determine the reward. The agent's objective is to maximize its cumulative reward by learning the optimal action for each situation through repeated interactions.
 
-<center>
+<!-- <center>
 <p>
     <img src="/assets/images/rl/mdp.png" alt="MDP agent-environment interaction. Source: Adapted from the lecture slides." width="75%" height="auto">
     <p>MDP agent-environment interaction. Source: Adapted from the lecture slides.</p>
 </p>
-</center>
+</center> -->
 
 The key components that define an MDP are:
 
@@ -72,16 +42,17 @@ The key components that define an MDP are:
 6. **Discount Factor ($\gamma$):** This factor accounts for the preference of immediate rewards over future rewards. For example, if rewards are monetary, money available now can be invested to grow, making future money less valuable in comparison. Thus, future rewards are discounted.
 7. **Horizon ($H$):** The length of time over which the agent will operate and make decisions.
 
-{% include admonition.html type="tip" title="Goal" body="
+:::info Goal
+
 The goal is for the agent to learn a policy that maximizes its expected discounted reward over time:
 
 $$
 \underset{\pi}{max}\ \mathbb E[\displaystyle\sum_{t=0}^H \gamma^t \cdot R(S_t, A_t, S_{t+1})|\pi]
 $$
 
-" %}
+:::
 
-{% include admonition.html type="example" title="Examples" body="
+:::tip Examples
 1. Consider a cleaning robot where the **states** include the robot's position and the layout of the house. **Actions** might include moving or picking up objects. The **transition model** describes the outcome probabilities of these actions, and the **reward function** could be based on cleanliness or organization.
 
 2. For a running robot, **states include** joint angles and velocities, with motor torques as **actions**. The **reward** might be for staying still or moving forward.
@@ -89,19 +60,20 @@ $$
     In both cases, the **discount factor** and **horizon** are chosen based on the desired timeframe for evaluating performance.
 
 3. Other examples include balancing a pole, playing games like Tetris or Go, managing server requests, or navigating self-driving cars. Each of these problems can be mapped onto the MDP framework, allowing the use of reinforcement learning algorithms to find optimal policies.
-" %}
+:::
 
-{% include admonition.html type="note" title="Grid-World" body="
+:::note Grid World
 Throughout the course, a canonical example called grid world will be used to build intuition about MDPs and reinforcement learning algorithms. In grid world, an agent navigates a grid to reach a goal while avoiding obstacles and pitfalls, with rewards assigned to reaching specific squares. This simple environment allows for fast experimentation and helps visualize optimal policies. The discount factor in grid world incentivizes the shortest path to the goal, demonstrating the importance of timely actions in maximizing rewards.
 
 
-<center>
+<!-- <center>
 <p>
     <img src='/assets/images/rl/grid-world-intro.png' alt='Grid World example. Source: Adapted from the lecture slides.' width='70%' height='auto'>
     <p>Grid world example. Source: Adapted from the lecture slides.</p>
 </p>
-</center>
-" %}
+</center> -->
+
+:::
 
 ## Exact Solution Methods
 
@@ -115,14 +87,14 @@ $$
 V^*(s) = \underset{\pi}{max}\ \mathbb E[\displaystyle\sum_{t=0}^H \gamma^t \cdot R(s_t, a_t, s_{t+1})|\pi, s_0=s]
 $$
 
-{% include admonition.html type="note" title="Grid-World" body="
+:::note Grid World
 To illustrate this, consider our grid world example. The agent in this world can move in four directions, except into boundaries. If it lands on a minus-one square, it receives a reward of -1 and the episode ends; if it lands on a plus-one square, it receives a reward of +1 and the episode ends.
 
-<center>
+<!-- <center>
 <p>
     <img src='/assets/images/rl/grid-world-actions.png' alt='Possible action in grid world. Source: Adapted from the lecture slides.' width='70%' height='auto'>
 </p>
-</center>
+</center> -->
 
 Let's imagine three different scenarios:
 
@@ -148,9 +120,9 @@ Let's imagine three different scenarios:
 
 
 This recursive dependency on neighboring values is the essence of value iteration. The value of each state is updated based on expected values from possible actions and their outcomes, iterating until convergence.
-" %}
+:::
 
-{% include admonition.html type="abstract" title="Algorithm" body="
+:::tip Algorithm
 
 Start with $V^*_0(s)=0$ for all $s$.<br/>
 For $k=1, \cdots, H$ steps:<br/>
@@ -163,7 +135,7 @@ V_k^*(s) \leftarrow \max_a \sum_{s'}P(s'|s,a)(R(s,a,s')+\gamma V^*_{k-1}(s')) \\
 \end{gather}
 $$
 
-" %}
+:::
 
 
 **Value Iteration Convergence**
@@ -171,7 +143,7 @@ $$
 
 Value iteration demonstrates a key property: **convergence**. As iterations progress, the value function gradually stops changing, indicating convergence. This means that running the algorithm long enough will yield a stationary optimal policy and the infinite horizon value, even without needing to run infinite iterations. The speed of convergence is influenced by the discount factor $\gamma$. A lower discount factor (closer to 0) accelerates convergence, while a higher discount factor (closer to 1) slows it down.
 
-{% include admonition.html type="quote" title="Theorem" body="
+:::note Theorem
 Value iteration converges. At convergence, we have found the optimal value function $V^*$ for the discounted infinite horizon problem, which satisfies the Bellman equations.
 
 $$
@@ -180,10 +152,10 @@ $$
 \sum_{s'} T(s,a,s')[R(s,a,s')+\gamma V^*(s')]
 $$
 
-" %}
+:::
 
 
-Running value iteration until convergence produces $V^\*$, from which we can extract the optimal action using the Bellman equation or by storing the optimal action during the algorithm’s execution. Importantly, the infinite horizon policy is stationary: the optimal action for any state $s$ remains the same over time. This efficiency in storage means we only need to store an action for each state, not for each time step, creating a convenient policy $\pi^\*$ that prescribes the optimal action for each state.
+Running value iteration until convergence produces $V^*$, from which we can extract the optimal action using the Bellman equation or by storing the optimal action during the algorithm’s execution. Importantly, the infinite horizon policy is stationary: the optimal action for any state $s$ remains the same over time. This efficiency in storage means we only need to store an action for each state, not for each time step, creating a convenient policy $\pi^*$ that prescribes the optimal action for each state.
 
 $$
 \pi^*(s)=\underset{a\ \in\ A}{\operatorname{argmax}}
@@ -192,9 +164,9 @@ $$
 $$
 
 
-{% include admonition.html type="tip" title="Why does value iteration converge?" body="
+:::tip Why does value iteration converge?
 
-$V^\*(s)$ represents the expected sum of rewards starting from state $s$ and acting optimally over infinite steps. Similarly, $V^\*_H(s)$ is the expected sum of rewards starting from state $s$ and acting optimally over $H$ steps. The additional rewards collected beyond $H$ steps can be expressed as a geometric series, discounted by $\gamma$:
+$V^*(s)$ represents the expected sum of rewards starting from state $s$ and acting optimally over infinite steps. Similarly, $V^*_H(s)$ is the expected sum of rewards starting from state $s$ and acting optimally over $H$ steps. The additional rewards collected beyond $H$ steps can be expressed as a geometric series, discounted by $\gamma$:
 
 $$
 \gamma^{H+1}R(s_{H+1})+\gamma^{H+2}R(s_{H+2})+\cdots 
@@ -206,11 +178,12 @@ $$
 = \frac{\gamma^{H+1}}{1-\gamma}R_{\max}
 $$
 
-Where $R_{\text{max}}$ is the maximum possible reward. As the horizon $H$ increases, $\gamma^{H+1}$ shrinks because $\gamma$ is less than 1. Consequently, the difference between the optimal value $V^\*$ for infinite horizon and the optimal value $V^\*_H$ for finite horizon $H$ decreases, becoming negligible as $H$ grows larger. This guarantees that value iteration converges, as the difference between $V^\*$ and $V^\*_H$ approaches zero.
-" %}
+Where $R_{\text{max}}$ is the maximum possible reward. As the horizon $H$ increases, $\gamma^{H+1}$ shrinks because $\gamma$ is less than 1. Consequently, the difference between the optimal value $V^*$ for infinite horizon and the optimal value $V^*_H$ for finite horizon $H$ decreases, becoming negligible as $H$ grows larger. This guarantees that value iteration converges, as the difference between $V^*$ and $V^*_H$ approaches zero.
+
+:::
 
 
-{% include admonition.html type="tip" title="Convergence through Contractions" body="
+:::tip Convergence through Contractions
 
 Another way to understand the convergence of value iteration is through contractions. The key idea involves defining a norm, such as the max norm:
 
@@ -236,167 +209,4 @@ $$
 ||V_{i+1}-V_i|| \le \epsilon, \Rightarrow ||V_{i+1}-V^*|| \lt \frac{2\epsilon\gamma}{(1-\gamma)}
 $$
 
-" %}
-
-
-**Q-Values**
-
-Analogously to the Value function, we have Q-Values, that are going to be important in the future, and help us solve small MDPs, where we can loop through all the states and actions repeatedly.
-
-$Q^*(s,a)=$ expected utility starting in $s$, taking action $a$, and (thereafter) acting optimally.
-
-Bellman Equation:
-
-$$
-Q^*(s,a)=\sum_{s'}P(s'|s,a)(R(s,a,s')+\gamma \max_{a'}Q^*(s',a'))
-$$
-
-Q-Value Iteration:
-
-$$
-Q^*_{k+1}(s,a) \larr \sum_{s'}P(s'|s,a)(R(s,a,s')+\gamma\max_{a'}Q^*_k(s',a'))
-$$
-
-### Policy Iteration
-
-Some of the approximate methods we are going to see in the future are built on Value Iteration, but some are built on Policy Iterations.
-
-**Policy Evaluation**
-
-In policy evaluation, we fix a policy and sample the action from that policy, we do not maximize the expected reward by choosing action.
-
-- Policy evaluation for a given $\pi(s)$:
-
-$$
-V^\pi_k(s) \larr \sum_{s'} P(s'|s,\pi(s))(R(s,\pi(s),s')+
-
-\gamma V^\pi_{k-1} (s))
-$$
-
-At convergence:
-
-$$
-\forall s \ V^\pi(s) \larr \sum_{s'} P(s'|s,\pi(s))(R(s,\pi(s),s')+
-
-\gamma V^\pi (s))
-$$
-
-For a stochastic policy, we have the iteration:
-
-$$
-V^\pi_{k+1}(s) \larr \sum_{s'} \sum_a
-
-\pi(a|s)P(s'|s,a) (
-
-R(s,a,s')+\gamma V^\pi_k(s')
-
-)
-$$
-
-**Policy Iteration**
-
-- Policy evaluation for current policy $\pi_k$:
-    - Iterate until convergence
-
-$$
-V^{\pi_k}_{i+1}(s) \larr \sum_{s'} P(s'|s,\pi_k(s))(R(s,\pi_k(s),s')+
-
-\gamma V^{\pi_k}_{i} (s'))
-$$
-
-- Policy improvement: find the best action according to a one-step look-ahead:
-
-$$
-\pi_{k+1}(s) \larr \argmax_a \sum_{s'} P(s'|s,a)[R(s,a,s')+
-
-\gamma V^{\pi_k} (s')]
-$$
-
-So we choose an action that maximizes the immediate reward and then we follow the previous policy to get the discounted value.
-
-We repeat until policy converges. At convergence: optimal policy; and converges faster than value iteration under some conditions.
-
-**Policy Iteration Guarantees**
-
-- **Theorem.** Policy iteration is guaranteed to converge and at convergence, the current policy and its value function are the optimal policy and the optimal value function.
-
-Proof Sketch:
-
-- *Guarantee to converge:* in every step, the policy improves. This means that a given policy can be encountered at most once. This means that after we have iterated as many times as there are different policies, i.e., $(\text{number of actions})^{(\text{number of states})}$, we must be done and hence have converged.
-- *Optimal at convergence:* by definition, at convergence $\pi_{k+1}(s) = \pi_k(s)$ for all states $s$, This means $\forall s \ V^{\pi_k}(s)-\max_a\sum_{s'}T(s,a,s')[R(s,a,s')+\gamma V_i^{\pi_k}(s')]$. Hence $V^{\pi_k}$ satisfies the Bellman equation, which means $V^{\pi_k}$ is equal to the optimal value function $V^*$.
-
-## Maximum Entropy Formulation
-
-This is another method to frame MDPs, and some methods in the future will borrow ideas from this method.
-
-**What if we could find a distribution over near-optimal solutions?**
-
-- More robust policy: if the environment changes, the distribution over near-optimal solutions might still have some good ones for the new situation.
-- More robust learning: if we can retain a distribution over near-optimal solutions our agent will collect more interesting exploratory data during learning.
-
-**Entropy**
-
-Entropy is the measure of uncertainty over a random variable $X$, the number of bits required to encode $X$, on average. Log 2 is used in the case of bits, but it can be measured with a natural log.
-
-$$
-\mathcal{H}(X) = \sum_ip(x_i)\log_2\frac{1}{p(x_i)}=-\sum_ip(x_i) \log_2 p(x_i)
-$$
-
-**Maximum Entropy MDP**
-
-- Regular formulation:
-
-$$
-\max_\pi \mathbb{E} [\sum_{t=0}^Hr_t]
-$$
-
-- Max-ent formulation (discount is left out for simplification):
-
-$$
-\max_\pi \mathbb{E} [\sum_{t=0}^Hr_t + \beta \mathcal{H}(\pi(\cdot|s_t))]
-$$
-
-So we a maximizing the expected reward plus the entropy of the policy. The policy gives the action to take in each state. Beta is a trade-off factor, the more we can control our actions, the more precise the agent is in what it achieves and the reward it gets. The larger the beta, the more we focus on the entropy and the less reward we are going to get.
-
-**Constrained Optimization**
-
-- Original problem:
-
-$$
-\begin{aligned}
-\max_x \ & f(x)\\
-\textrm{s.t.} \ & g(x)=0\\
-\end{aligned}
-$$
-
-- Lagrangian:
-
-$$
-\max_x\min_\lambda\mathcal{L}(x,\lambda)=f(x)+\lambda g(x)
-$$
-
-- At optimum:
-
-$$
-\frac{\partial\mathcal{L}(x,\lambda)}{\partial x} = 0 \\
-
-\frac{\partial\mathcal{L}(x,\lambda)}{\partial \lambda} = 0
-$$
-
-**Max-ent for 1-step problem**
-
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/88df98cf-9ad2-4d6f-852f-31623533c662/Untitled.png)
-
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e1a97dc7-7a06-4320-b4b1-717f1be10ad7/Untitled.png)
-
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/10decfca-6ae6-458d-835c-af0bc024f4c5/Untitled.png)
-
-# Deep Q-Learning
-
-# Policy Gradients and Advantage Estimation
-
-# TRPO and PPO
-
-# DDPG and SAC
-
-# Model-based RL
+:::

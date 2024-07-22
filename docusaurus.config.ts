@@ -39,8 +39,8 @@ const config: Config = {
           routeBasePath: '/',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          // editUrl:
+          //   'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
           remarkPlugins: [remarkMath],
           rehypePlugins: [rehypeKatex],
         },
@@ -83,7 +83,7 @@ const config: Config = {
           type: 'dropdown',
           label: 'Learning',
           position: 'left',
-          to: 'learning/',
+          // to: 'learning/',
           items: [
             {
               type: 'docSidebar',
@@ -105,16 +105,20 @@ const config: Config = {
         {
           label: 'About',
           position: 'left', // or 'right'
-          to: '/about',
+          // to: '/about',
           items: [
             {
-              to: '/about/CV', // replace with your actual page paths
-              label: 'Curriculum Vitae',
+              to: '/about', // replace with your actual page paths
+              label: 'About Me',
             },
             {
-              to: '/about/projects',
-              label: 'Projects',
-            }
+              to: '/cv', // replace with your actual page paths
+              label: 'Curriculum Vitae',
+            },
+            // {
+            //   to: '/about/projects',
+            //   label: 'Projects',
+            // }
             // add more pages as needed
           ],
         }
@@ -124,19 +128,19 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'About Me',
+          title: 'About',
           items: [
             {
               label: 'About Me',
               to: '/about'
             },
-            {
-              label: 'Projects',
-              to: '/about/projects',
-            },
+            // {
+            //   label: 'Projects',
+            //   to: '/about/projects',
+            // },
             {
               label: 'Curriculum Vitae',
-              to: '/about/CV',
+              to: '/cv',
             },
           ],
         },
