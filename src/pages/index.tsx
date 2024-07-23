@@ -62,6 +62,7 @@ function HomepageHeader({ isMobileDevice }: HomepageHeaderProps): JSX.Element {
 
   return (
     <header className={clsx(styles.heroBanner)}>
+      <div className={styles.heroBannerBackground}></div>
       <div className={clsx(styles.heroTextContainer)}>
         {!isMobileDevice && (
           <div className={styles.avatarArea}>
