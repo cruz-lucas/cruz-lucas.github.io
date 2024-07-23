@@ -6,13 +6,14 @@ import {
 } from '@site/src/data'
 import { isMobile, setClipBoardText } from '@site/src/utils'
 import profile from '@site/static/img/profile.png'
-import github from '@site/static/img/icons/social/github.png'
-import mail from '@site/static/img/icons/social/mail.png'
-import linkedin from '@site/static/img/icons/social/linkedin.png'
-import twitter from '@site/static/img/icons/social/twitter.png'
+import GitHubIcon from '@site/src/components/Icons/GitHubIcon';
+import MailIcon from '@site/src/components/Icons/MailIcon';
+import LinkedInIcon from '@site/src/components/Icons/LinkedInIcon';
+import TwitterIcon from '@site/src/components/Icons/TwitterIcon';
 import Layout from '@theme/Layout'
 import clsx from 'clsx'
 import React, { useState } from 'react'
+import Notification from '@site/src/components/Notification';
 
 import styles from './styles.module.css'
 
@@ -22,7 +23,7 @@ type HomepageHeaderProps = {
 
 type ContactMeBtnProps = {
   readonly title?: string
-  readonly src: any
+  readonly Icon: React.ComponentType;
   link?: string
   isCopyBtn?: boolean
   copySuccess?: () => void
@@ -75,62 +76,74 @@ function HomepageHeader({ isMobileDevice }: HomepageHeaderProps): JSX.Element {
               
           </div>
         )}
+        <div className={styles.heroTextArea}>
+          <div className={styles.heroTextAreaButton}>
+            <Link
+              className={clsx(
+                'button',
+                'button--secondary',
+                'button--sm',
+                styles.heroTextAreaButton
+              )}
+              to="/learning"
+            >
+              {"Go to Learning"}
+            </Link>
+          </div>
+        </div>
         <div className={styles.navLinkIconArea}>
           <ContactMeBtn
             title={contactMeData.github}
-            src={github}
+            Icon={GitHubIcon}
             link={contactMeData.githubLink}
           />
           <ContactMeBtn
             title={contactMeData.linkedin}
-            src={linkedin}
+            Icon={LinkedInIcon}
             link={contactMeData.linkedinLink}
           />
           <ContactMeBtn
+            title={contactMeData.twitter}
+            Icon={TwitterIcon}
+            link={contactMeData.twitterLink}
+          />
+          <ContactMeBtn
             title={contactMeData.mail}
-            src={mail}
+            Icon={MailIcon}
             link={contactMeData.mailAddress}
             isCopyBtn
             copySuccess={copySuccess}
           />
-          <ContactMeBtn
-            title={contactMeData.twitter}
-            src={twitter}
-            link={contactMeData.twitterLink}
-          />
         </div>
       </div>
+      <Notification show={show} message="Email successfully copied to clipboard!" />
     </header>
   )
 }
 
 function ContactMeBtn({
   title,
-  src,
+  Icon,
   link,
   isCopyBtn = false,
-  copySuccess
+  copySuccess,
 }: ContactMeBtnProps): JSX.Element {
   if (isCopyBtn && typeof link !== 'undefined') {
     return (
       <div
         className={styles.navLink}
         onClick={() => {
-          setClipBoardText(link)
+          setClipBoardText(link);
           if (copySuccess) {
-            copySuccess()
+            copySuccess();
           }
         }}
       >
         <div className={styles.imageWrapper}>
-          <img
-            src={src}
-            alt={title}
-            title={title}
-          />
+          <Icon title={title} />
         </div>
       </div>
-    )
+    );
   }
   return (
     <Link
@@ -139,12 +152,8 @@ function ContactMeBtn({
       href="_blank"
     >
       <div className={styles.imageWrapper}>
-        <img
-          src={src}
-          alt={title}
-          title={title}
-        />
+        <Icon title={title} />
       </div>
     </Link>
-  )
+  );
 }
