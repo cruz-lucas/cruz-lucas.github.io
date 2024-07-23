@@ -90,7 +90,7 @@ const config: Config = {
           type: 'dropdown',
           label: 'Learning',
           position: 'left',
-          to: 'learning/',
+          to: 'learning',
           items: [
             {
               type: 'docSidebar',
@@ -99,12 +99,12 @@ const config: Config = {
             },
             {
               type: 'docSidebar',
-              sidebarId: 'MLSidebar',        
+              sidebarId: 'MLSidebar',
               label: 'Machine Learning',
             },
             {
               type: 'docSidebar',
-              sidebarId: 'StatsSidebar',        
+              sidebarId: 'StatsSidebar',
               label: 'Statistics',
             },
           ],
