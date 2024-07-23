@@ -7,6 +7,7 @@ import rehypeKatex from 'rehype-katex';
 const config: Config = {
   title: 'Lucas Cruz',
   favicon: 'img/favicon/favicon.ico',
+  
 
   // Set the production url of your site here
   url: 'https://lucas-cruz.com',
@@ -18,6 +19,7 @@ const config: Config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'cruz-lucas', // Usually your GitHub org/user name.
   projectName: 'cruz-lucas.github.io', // Usually your repo name.
+  trailingSlash: false,
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -74,16 +76,21 @@ const config: Config = {
     // image: 'img/docusaurus-social-card.jpg',
     navbar: {
       title: 'Lucas Cruz',
-      // logo: {
-      //   alt: 'My Site Logo',
-      //   src: 'img/logo.svg',
-      // },
+      logo: {
+        alt: 'Site Logo',
+        src: 'img/profile.png',
+        srcDark: 'img/profile.png',
+        target: '_self',
+        width: 32,
+        height: 32,
+        className: 'custom-navbar-logo-class',
+      },
       items: [
         {
           type: 'dropdown',
           label: 'Learning',
           position: 'left',
-          // to: 'learning/',
+          to: 'learning/',
           items: [
             {
               type: 'docSidebar',
@@ -103,25 +110,21 @@ const config: Config = {
           ],
         },
         {
-          label: 'About',
-          position: 'left', // or 'right'
-          // to: '/about',
-          items: [
-            {
-              to: '/about', // replace with your actual page paths
-              label: 'About Me',
-            },
-            {
-              to: '/cv', // replace with your actual page paths
-              label: 'Curriculum Vitae',
-            },
-            // {
-            //   to: '/about/projects',
-            //   label: 'Projects',
-            // }
-            // add more pages as needed
-          ],
-        }
+          to: '/about', 
+          label: 'About Me',
+          position: 'right',
+        },
+        {
+          to: '/cv', 
+          label: 'Curriculum Vitae',
+          position: 'right',
+        },
+        {
+          href: "https://github.com/cruz-lucas",
+          position: "right",
+          className: "header-github-link",
+          "aria-label": "GitHub repository",
+        },
       ],
     },
     footer: {
