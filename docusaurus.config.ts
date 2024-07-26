@@ -3,6 +3,8 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import {contactMeData} from './src/data/constants'
+
 
 const config: Config = {
   title: 'Lucas Cruz',
@@ -149,35 +151,56 @@ const config: Config = {
         },
         {
           title: 'Reinforcement Learning',
-          items: [/*
+          items: [
             {
               label: 'Foundations of Deep RL',
-              to: '/docs/reinforcement-learning',
-            },*/
+              to: '/drl',
+            },
           ],
         },
         {
-          title: 'Machine Learnig',
-          items: [ /*
+          title: 'Machine Learning',
+          items: [
             {
               label: 'Designing Machine Learning Systems',
-              to: '/docs/machine-learnin',
-            },*/
+              to: '/ml-systems',
+            },
           ],
         },
         {
           title: 'Statistics',
           items: [
-            /* {
+            {
               label: '(Not that) Basic Statistical Concepts',
-              to: '/docs/statistics/basic-statistics',
+              to: '/statistics',
             },
             {
               label: 'A Practical Guide to A/B Testing',
-              to: '/docs/statistics/experimentation',
-            },*/
+              to: '/experimentation',
+            },
           ],
-        }, // TODO: insert contact links
+        },
+        {
+          title: 'Contact',
+          items: [
+            {
+              label: contactMeData.github,
+              href: contactMeData.githubLink
+            },            
+            {
+              label: contactMeData.twitter,
+              href: contactMeData.twitterLink
+            },            
+            {
+              label: contactMeData.linkedin,
+              href: contactMeData.linkedinLink
+            },            
+            // {
+            //   label: contactMeData.mail,
+            //   to: '/about'
+            // },            
+          ]
+        }
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Lucas Cruz. Built with Docusaurus.`,
     },

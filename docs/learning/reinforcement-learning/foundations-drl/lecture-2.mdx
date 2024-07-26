@@ -1,0 +1,191 @@
+---
+title: 2. Deep Q-Learning
+sidebar_position: 2
+slug: /drl/lecture-2
+---
+
+# Q-Learning
+
+:::warning Work in Progress
+These are my rough notes.
+:::
+
+# Recap
+
+Optimal Planning/Control
+
+$\downarrow$
+
+Given an $MDP(S,A,P,R,\gamma,H)$ find the optimal policy $\pi^*$
+
+| Limitations | How to address |
+| --- | --- |
+| Requires access to dynamics model | Sample-based approximations |
+| Requires iteration over all states and actions | $Q$/$V$ function fitting (and policy as well in the following lectures) |
+
+## Q-Values
+
+$Q^*(s,a) =$ expected utility starting in $s$, taking action $a%$, and acting optimally.
+
+### Bellman Equation:
+
+$$
+Q^*(s,a) = \displaystyle\sum_{s'}P(s'|s,a)(R(s,a,s')+\gamma \cdot \underset{a'}{max}\ Q^*(s',a'))
+$$
+
+## (Tabular) Q-Learning
+
+Q-values iteration:
+
+$$
+Q_{k+1}(s,a) \larr \displaystyle\sum_{s'}P(s'|s,a)(R(s,a,s')+\gamma \cdot \underset{a'}{max}\ Q_k(s',a'))
+$$
+
+Rewrite as an expectation:
+
+$$
+Q_{k+1}(s,a) \larr \mathbb E_{s'\sim P(s'|s,a)}[R(s,a,s')+\gamma \cdot \underset{a'}{max}\ Q_k(s',a')]
+$$
+
+<aside>
+💡 Expectations can be approximated with samples. In practical situations, we might not have the exact expectation because the transition matrix is unknown.
+
+</aside>
+
+So the agent can experience samples:
+
+- For an state-action pair $(s,a)$, receive: $s’\sim P(s’|s,a)$
+- Consider your old estimate: $Q_k(s,a)$
+- Consider your new sample estimate:
+    
+    $target(s’) = R(s,a,s’) + \gamma \ \cdot \ \underset{a'}{max} \ Q_k(s',a')$
+    
+- Incorporate the new estimate into a running average:
+    
+    $Q_{k+1}(s,a) \larr (1 -\alpha)\cdot Q_k(s,a)+\alpha [target(s')]$
+    
+
+![Screenshot_3.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d227f1bd-60f6-4493-aa33-dad679c211b1/Screenshot_3.png)
+
+### How to sample actions?
+
+- $\varepsilon$-Greedy: Choose random actions with probability $\color{orange}\varepsilon$ (Exploration), otherwise choose action greedily (Exploitation).
+
+### Q-Learning Properties
+
+- Q-Learning converges to optimal policy even if you’re action suboptimally.
+- This is called **off-policy learning**.
+- Caveats:
+    - You have to explore enough.
+    - You have to eventually make learning rate ($\alpha$) small enough.
+        - Otherwise, the latest experiences will make you hop around too much with every update.
+    - … but not decrease too quickly.
+        - You’ll not update enough.
+- Technical requirements:
+    - All states and actions are visited infinitely often
+        - Basically, in the limit, it doesn’t matter how you select actions.
+    - Learning rate schedule such that for all state and action pairs $(s,a)$:
+
+$$
+\displaystyle\sum_{t=0}^\infin \alpha_t(s,a)=\infin \qquad \qquad \displaystyle\sum_{t=0}^\infin \alpha_t^2(s,a)<\infin
+$$
+
+### Can Tabular Methods Scale?
+
+Continuous (by crude discretization) and even discrete environments (such as tetris and Atari) have huge state space and it’s not practical to have a table this large (tetris is $10^{60}$, humanoid is $10^{100}$).
+
+## Approximate Q-Learning
+
+Instead of a table, we have a ***parametrized Q function:*** $Q_\theta (s,a)$
+
+- Can be a linear function in features.
+- Or a neural net, decision tree, etc.
+
+Learning rule:
+
+- Remember:
+
+$$
+target(s') = R(s,a,s') + \gamma \cdot\underset{a'}{max}\ Q_{\theta_k}(s',a')
+$$
+
+- Update:
+
+$$
+\theta_{k+1} \larr \theta_k - \alpha \nabla_{\theta}\Bigg[\frac{1}{2}(Q_{\theta}(s,a) - target(s'))^2\Bigg]\Bigg\vert_{\theta=\theta_k}
+$$
+
+# Deep Q Networks (DQN)
+
+![Source: https://doi.org/10.48550/arXiv.1312.5602](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/41cd0239-7573-4bb8-9ff4-3de4c2dc78ad/Screenshot_5.png)
+
+Source: https://doi.org/10.48550/arXiv.1312.5602
+
+![Screenshot_4.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0c62fcdd-703e-4220-afa8-d70f82ab1d9b/Screenshot_4.png)
+
+## DQN Details
+
+- Uses Huber loss instead of squared loss on Bellman error.
+
+$$
+L_{\delta}=\begin{cases}\frac{1}{2}a^2 & for |a|\le \delta, \\ \delta(|a|-\frac{1}{2}\delta), & otherwise.\end{cases}
+
+$$
+
+- Uses RMSProp instead of vanilla SGD.
+- It helps to anneal the exploration rate.
+    - Start $\varepsilon$ at 1 and anneal it to 0.1 or 0.05 over the first million frames.
+
+### ATARI Network Architecture
+
+- Convolutional neural network architecture:
+    - History of frames as input.
+    - One output per action - expected reward for that action $Q(s,a)$.
+    - The final results used a slightly bigger network (3 convolutional  fully-connected hidden layer).
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/98c40c31-0cce-498b-a99f-a0eb8fa393ea/Untitled.png)
+
+## Updates since Deepmind’s DQN
+
+### Double QDN
+
+- There is an upward bias in $\underset{a}{max}\ Q(s,a;\theta)$.
+- DQN maintains two sets of weights $\theta$ and $\theta^.$, so reduce bias by using:
+    - $\theta$ for selecting the best action.
+    - $\theta^.$ for evaluating the best action.
+
+<aside>
+💡 This helps with stabilizing the learning, it becomes a lot faster. It counterbalances the upward bias. In that way, there is some independence in how the action is chosen.
+
+</aside>
+
+- Double DQN loss:
+
+$$
+L_i(\theta_i)=\mathbb E_{s,a,s',r \ D}(r+\gamma \ Q(s', \underset{a'}{argmax}\ Q(s',a';\theta);\theta_i^-)-Q(s,a;\theta_i))^2
+$$
+
+### Prioritized Experience Replay
+
+- Replaying all transitions with equal probability is highly suboptimal.
+- Replay transitions in proportion to absolute Bellman error:
+
+$$
+\big|r + \gamma \ \underset{a'}{max} \ Q(s',a';\theta^-)-Q(s,a;\theta)\big|
+$$
+
+- leads to much faster learning.
+
+<aside>
+💡 There is a lot to learn when the target value is very different from what the $Q$ function predicted.
+
+</aside>
+
+### See also
+
+- “Rainbow: Combining Improvements in Deep Reinforcement Learning”, Matteo Hessel et al, 2017.
+    - Double DQN (DDQN)
+    - Prioritized Replay DDQN
+    - Dueling DQN
+    - Distributional DQN
+    - Noisy DQN

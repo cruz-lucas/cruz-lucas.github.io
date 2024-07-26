@@ -1,0 +1,23 @@
+---
+title: 3. Data Engineering Fundamentals
+sidebar_position: 3
+slug: /ml-systems/chapter-3
+---
+
+
+# Data Engineering Fundamentals
+
+
+:::warning Recommended Readings
+
+This chapter is very introductory. The recommendation is Martin Kleppmann's book [Designing Data-Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/)
+:::
+
+Key topic from the chapter:
+
+- **Modes of Dataflow**
+  - **Data Passing Through Databases:** The simplest mode, but the slowest because it relies on multiple processes to read/write from the same database.
+  - **Data Passing Through Services:** This is a _request-driven_ architecture. Data is passed from service A to B directly through request. The main issue with this architecture is that it become excessively complicated the more services you have depending on each other's data synchronously.
+  - **Data Passing Through Real-Time Transport:** The _event-driven_ architecture bypass that issue because the services writing and reading messages/events are decoupled, the communication is made through a broker. Also, we use the in-memory storage to broker data. The two most common types of real-time transport are pubsub (publish-subscribe) and message queue:
+    - **PubSub:** Any service can read or write to different topics in a real-time transport, and the service that generated the event doesn't care about the services consuming it. Common solutions for PubSub are Apache Kafka, Amazon Kinesis, and Google Cloud Pub/Sub.
+    - **Message Queue:** Often an event (or message) generated is destined for a specific consumer, and the message queue is responsible for delivering the right message for the right consumer. Common solutions for message queue are Apache RocketMQ and RabbitMQ.

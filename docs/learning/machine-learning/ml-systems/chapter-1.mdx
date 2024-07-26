@@ -1,0 +1,39 @@
+---
+title: 1. Overview of Machine Learning Systems
+sidebar_position: 1
+slug: /ml-systems/chapter-1
+---
+
+# Overview of Machine Learning Systems
+
+
+Machine learning (ML) has become a cornerstone of modern technology, driving advancements in various fields such as healthcare, finance, marketing, and more. However, the decision to use machine learning and the approach to building and deploying ML systems requires careful consideration and planning. This chapter provides a foundational overview of when to use machine learning, the differences between research and production environments, and the essential factors that influence the success of ML projects.
+
+
+## When to Use Machine Learning
+
+Before starting a machine learning (ML) project, it is essential to determine if it is necessary or cost-effective.
+
+> Machine Learning is an approach to (1) _learn_ (2) _complex patterns_ from (3) _existing data_ and use these patterns to make (4) _predictions_ on (5) _unseen data_.
+
+
+1. **Learn:** Most ML algorithms learn from data, meaning they can adjust the model's state based on feedback from the model's performance relative to the data. This learning process generally aims at approximating a desired function.
+2. **Complex patterns:** ML algorithms are particularly useful when there is a complex mapping between input data and the desired output. This complexity makes it difficult to manually craft heuristics, as seen in tasks like image classification.
+3. **Existing data:** Data must be available or feasible to collect. Without data, training an ML model is impossible. However, it is possible to launch an ML system without initial data in continual learning scenarios, where models are updated as data arrives in production.
+4. **Predictions:** An ML model makes estimates to answer questions without existing answers. The key is to reframe the question as a predictive problem.
+5. **Unseen data:** An ML model is only useful if it can generalize to new data. This implies that production and training data should come from similar, if not the same, distributions. We can only assume the distribution remains stable and monitor future performance to either trigger retraining or assess continual learning.
+
+ML solutions are particularly suited to problems that:
+
+1. **Are repetitive:** When a pattern appears frequently, machines can learn it more easily.
+2. **Have a low cost of wrong predictions:** The consequences of incorrect predictions should be manageable.
+3. **Are at scale:** The problem should be significant enough to justify the use of ML.
+
+
+## Machine Learning in Research Versus Production
+
+The focus in research is on optimizing a metric to excel in a benchmark. In production, the focus shifts to optimizing one or multiple business metrics, even if this means accepting lower F1 scores or other traditional ML metrics. Stakeholders may require constraints such as limited response time or maximized revenue, necessitating a balance of all requirements.
+
+Computational priorities also differ: research prioritizes faster training with high parallelization and throughput, while production prioritizes fast inference with low latency and response time. Techniques like ensemble learning are less suited for production compared to methods that speed up inference, such as quantization, distillation, or low-rank factorization.
+
+Other differences include time spent on data. In research, data is typically cleaned and ready for use in benchmark optimization. In production, significant effort is required for cleaning, labeling, feature engineering, and data collection. Additionally, production systems must consider model fairness from the start, and interpretability is crucial. If people do not trust the model, they will not use it.
