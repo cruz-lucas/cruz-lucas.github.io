@@ -1,0 +1,91 @@
+---
+title: 5. DDPG and SAC
+sidebar_position: 5
+slug: /drl/lecture-5
+---
+
+# DDPG and SAC
+
+:::warning Work in Progress
+These are my rough notes.
+:::
+
+# Deep Deterministic Policy Gradient (DDPG)
+
+DDPG (Deep Deterministic Policy Gradient) is a reinforcement learning algorithm that combines the actor-critic approach with the deterministic policy gradient. It is an off-policy algorithm, meaning that it learns from data that it has not generated itself.
+
+One of the key features of DDPG is the use of a replay buffer, which stores past experiences in a memory buffer. This replay buffer allows the algorithm to learn from past experiences and improve its performance over time. The critic network is trained using the data in the replay buffer, while the actor network is trained using the gradients produced by the critic network.
+
+One of the advantages of DDPG is that it works well in continuous action spaces, which can be difficult for other reinforcement learning algorithms to handle. This is because it uses a deterministic policy gradient, which allows it to learn an optimal policy even in continuous action spaces. Additionally, DDPG has been shown to be effective in a variety of applications, including robotics, autonomous driving, and game playing.
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0c3947db-67ac-424e-9130-5160af5948c9/Untitled.png)
+
+In the Q-function update, the target can be the reward plus the discounted Q-function of the next state, or we could use reward at the current transition plus reward at the next plus Q-function after that, we saw this in A3C and Generalized Advantage Estimation, there are many variants of this, in the original paper they used the one step bootstrap signal as shown, but variants have come since where we would use multiple steps of rewards followed by the Q-function as your target. So we are doing Q learning but with data collected from the current, or recent, policy.
+
+Unlike standard policy gradient methods, such as PPO and TRPO, which relies on the likelihood ratio policy gradient this policy gradient goes through the Q-function, and it **can** be a deterministic policy.
+
+- Add noise for exploration.
+- Incorporate replay buffer and target network ideias from DQN for increase stability.
+- Use lagged (Polyak-averaging) version of $Q_\phi$ and $\pi_\theta$ for target values $\hat{Q}_t$:
+
+$$
+\hat{Q}_t = r_t +\gamma Q_{\phi'}(s_{t+1}+\pi_{\theta'}(s_{t+1})) 
+$$
+
+**Advantage**: Very sample efficient thanks to off-policy updates.
+
+**Disadvantage**: Often unstable.
+
+This is where SAC comes in, it adds entropy of policy to the objective, ensuring better exploration and less overfitting of the policy to any quirks in the Q-function. Introducing max entropy smooths out the action distribution making the policy not to seek any specific peak that the Q-function might be outputting.
+
+# Soft Actor Critic (SAC)
+
+Soft Actor Critic (SAC) is another off-policy reinforcement learning algorithm that has gained popularity in recent years. It is designed for continuous control tasks and is known for its sample efficiency and stable performance.
+
+Similar to DDPG, SAC uses a replay buffer to store past experiences and learn from them. However, SAC uses a different approach to update the actor network, which allows it to explore the action space more effectively. SAC also introduces a new concept called entropy regularization, which encourages exploration and prevents the policy from becoming too deterministic.
+
+One of the main advantages of SAC over DDPG is its ability to learn from both the environment and the policy. This allows it to learn more effectively and achieve better performance in a wider range of tasks. SAC has been applied successfully to a variety of tasks, including robotic manipulation, locomotion, and dexterous object manipulation.
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8d7e56ef-9995-4383-a494-bc2d8b1dfa99/Untitled.png)
+
+The addition in the Bellman equation is the entropy term. We optimize the policy to maximize the Q value, accounting for the fact that we are now on max entropy policy, which means a policy that is effectively the exponentiated Q values.
+
+- Objective (max entropy objective):
+
+$$
+J(\pi)=\sum_{t=0}^T \mathbb E_{(s_t,a_t) \sim \rho_\pi}[r(s_t,a_t)+\alpha \mathcal
+H (\pi(\cdot|s_t))]
+$$
+
+- Iterate:
+    - Perform roll-out from pi, add data in replay buffer
+    - Lean $V, Q, \pi$:
+
+$$
+\begin{align*}
+
+J_V(\psi)&=\mathbb E_{s_t \sim \mathcal D} \Bigg[
+
+\frac{1}{2}\Big(
+
+V_\psi(s_t) - \mathbb E_{a_t \sim \pi_\phi}
+
+\Big[Q_\theta(s_t,a_t)-\log \pi_\phi(a_t, s_t)\Big]
+
+\Big)^2\Bigg] \\
+
+\hat{Q}(s_t,a_t)&=r(s_t,a_t)+\gamma \mathbb E_{s_{t+1 \sim p}}\Big[V_{\overline{\psi}}(s_{t+1})\Big] \\
+
+J_\pi(\phi) &= \mathbb E_{s_t\sim \mathcal D} \Bigg[
+
+D_{KL} \Bigg(
+
+\pi_\phi(\cdot|s_t) \Big|\Big|
+\frac{\exp(Q_\theta(s_t,\cdot))}{Z_\theta(s_t)}
+
+\Bigg)
+
+\Bigg]
+
+\end{align*}
+$$

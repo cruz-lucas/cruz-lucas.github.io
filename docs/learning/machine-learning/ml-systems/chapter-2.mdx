@@ -1,0 +1,75 @@
+---
+title: 2. Introduction to Machine Learning Systems Design
+sidebar_position: 2
+slug: /ml-systems/chapter-2
+---
+
+
+# Introduction to Machine Learning Systems Design
+
+
+Designing machine learning systems requires a holistic approach that encompasses both business objectives and technical requirements. A well-designed ML system not only delivers accurate predictions but also aligns with the overall goals of the organization. This chapter delves into the essential aspects of ML systems design, starting from aligning ML objectives with business goals to understanding the critical requirements for building robust and scalable systems. Additionally, it discusses the iterative nature of ML system development and the ongoing debate between data-centric and model-centric approaches in machine learning.
+
+
+## Business and ML Objectives
+
+> Most companies don't care about the fancy ML metrics.
+
+
+For an ML project to succeed within an organization, it's crucial to tie the performance of an ML system to business metrics. Most companies assess the impact of different ML models through experimentation, like A/B testing, and choose the model that leads to better business metrics, regardless of whether the model has better ML metrics.
+
+The business metrics optimized by experiments can impact profit either directly (i.e., conversion rate or cost reduction) or indirectly (i.e., higher customer satisfaction or increased time spent on the site). Many companies create their own metrics to map business metrics to ML metrics, such as [Netflix's _take rate_](https://netflixtechblog.com/artwork-personalization-c589f074ad76).
+
+:::tip Decoupling Objectives
+
+Models often need to optimize multiple objectives. Traditionally, this is done by combining objectives during loss calculation and tuning $\alpha$ and $\beta$:
+
+$$
+loss = \alpha \, \text{objective}_1 + \beta \, \text{objective}_2
+$$
+
+A better practice is to train different models for each objective and then weight the outputs by $\alpha$ and $\beta$. This allows changing system behavior without retraining and applying different monitoring policies for each model, improving maintainability.
+
+$$
+\text{score} = \alpha \, \text{score}_1 + \beta \, \text{score}_2
+$$
+
+:::
+
+## Requirements for ML Systems
+
+Most ML systems should satisfy 4 common requirements: reliability, scalability, maintainability, and adaptability.
+
+1. **Reliability:** The system should continue to perform correctly at the desired level of performance, even in the face of adversity (hardware, software, or human errors). ML systems can fail silently, and methods to monitor them are discussed in Chapter 8.
+2. **Scalability:** An ML system should be able to scale up or down according to demand and manage all artifacts, models, and data produced.
+3. **Maintainability:** Workloads should be structured so that people from different backgrounds and expertise can contribute and use the same tools. Code should be documented, and code, data, and artifacts should be versioned. Models should be reproducible.
+4. **Adaptability:** ML systems should be able to evolve in response to data shifts, changes in targets, or business objectives without service interruption.
+
+## Iterative Process
+
+![Iterative process of an ML system design. Source: Adapted from the book.](@site/static/img/learning/ml-sys/ml_design_process.png)
+
+Brief description of the steps of an ML system design process:
+
+1. **Project Scoping:** Define objectives, goals, constraints, resources needed, and stakeholders.
+2. **Data Engineering:** After defining initial requirements, work with the data. This includes curation through sampling techniques, labeling, and defining data pipelines.
+3. **ML Model Development:** Engineer features and develop initial models (the “fun” part).
+4. **Deployment:** Make the trained models available to users.
+5. **Monitoring and continual learning:** Monitor performance in production, ensuring the system remains reliable, scalable, maintainable, and adaptable.
+6. **Business Analysis:** Evaluate model performance against business goals and generate new business insights.
+
+## Mind Versus Data
+
+The discussion of mind versus data revolves around approaches to ML systems development. The "mind" approach favors spend more time researching inductive bias and architectural designs, while the "data" approach favors getting more data and computation. There are arguments supporting both data-centric and model-centric development of ML systems.
+
+
+:::warning Recommended Readings
+
+- Anand Rajaraman, [More data usually beats better algorithms](https://anand.typepad.com/datawocky/2008/03/more-data-usual.html)
+- Richard Sutton, [The Bitter Lesson](https://www.cs.utexas.edu/~eunsol/courses/data/bitter_lesson.pdf)
+- Judea Pearl, [The book of Why](https://bayes.cs.ucla.edu/WHY/)
+- Discussion between Yann LeCun and Christopher Manning about [Deep Learning and Innate Priors](https://www.youtube.com/watch?v=fKk9KhGRBdI)
+- Alon Halevy, Peter Norvig, and Fernando Pereira, [The Unreasonable Effectiveness of Data](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/35179.pdf)
+
+:::
+
