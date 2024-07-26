@@ -1,6 +1,6 @@
 import React from "react";
 import { Chrono } from "react-chrono";
-
+import BrowserOnly from '@docusaurus/BrowserOnly';
 import './timeline.css'
 
 import atariGif from "@site/static/img/learning/rl/atariGif.webp";
@@ -125,29 +125,35 @@ const events = [
 ];
 
 
-const TimelineComponent = () => (
-    <Chrono
-        items={events}
-        mode="VERTICAL_ALTERNATING"
-        highlightCardsOnHover="true"
-        disableToolbar="true"
-        mediaSettings={{ align: 'center', fit: 'cover' }}
-        fontSizes={{
-            title: "2rem",
-            cardText: "1.3rem",
-        }}
-        theme={{
-            primary: 'var(--timeline-color-primary)',
-            cardDetailsColor: 'var(--timeline-color-card-details)',
-            cardMediaBgColor: 'var(--timeline-color-media-bg)',
-            cardTitleColor: 'var(--timeline-color-card-title)',
-            secondary: 'var(--timeline-color-secondary)',
-            titleColor: 'var(--timeline-color-title)',
-            titleColorActive: 'var(--timeline-color-title-active)',
-            cardBgColor: 'var(--timeline-color-card-bg)'
-        }}
-    />
-);
+const TimelineComponent = () => {
+    return (
+        <BrowserOnly fallback={<div>Loading...</div>}>
+            {() => (
+                <Chrono
+                    items={events}
+                    mode="VERTICAL_ALTERNATING"
+                    highlightCardsOnHover="true"
+                    disableToolbar="true"
+                    mediaSettings={{ align: 'center', fit: 'cover' }}
+                    fontSizes={{
+                        title: "2rem",
+                        cardText: "1.3rem",
+                    }}
+                    theme={{
+                        primary: 'var(--timeline-color-primary)',
+                        cardDetailsColor: 'var(--timeline-color-card-details)',
+                        cardMediaBgColor: 'var(--timeline-color-media-bg)',
+                        cardTitleColor: 'var(--timeline-color-card-title)',
+                        secondary: 'var(--timeline-color-secondary)',
+                        titleColor: 'var(--timeline-color-title)',
+                        titleColorActive: 'var(--timeline-color-title-active)',
+                        cardBgColor: 'var(--timeline-color-card-bg)'
+                    }}
+                />
+            )}
+        </BrowserOnly>
+    );
+};
 
 export default TimelineComponent;
 
