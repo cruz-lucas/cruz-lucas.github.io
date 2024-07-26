@@ -28,8 +28,8 @@ We need to iterate in this loop to gather more data with different policies and 
 
 MB-RL has much better sample efficiency so why is it not used all the time?
 
-- If we have access to a simulator, we don’t need to run policy in a learned simulator (i.e. Atari, Robotics, …).
-- Training instability (we’ll take a look at one approach to address that (ME-TRPO)).
+- If we have access to a simulator, we don't need to run policy in a learned simulator (i.e. Atari, Robotics, …).
+- Training instability (we'll take a look at one approach to address that (ME-TRPO)).
 - Not achieving the same asymptotic performance as model-free methods (to address that: MB-MPO).
 
 # Robust Model-based RL: Model-Ensemble TRPO (ME-TRPO)
@@ -49,7 +49,7 @@ This was done with TRPO because it was the SOTA at the time of the work, now it 
 
 ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/55282961-36db-4820-8e89-fbbdffb3331c/Untitled.png)
 
-Whenever there is enough data to support an accurate model, the ensemble of dynamics models will typically agree. When there is not enough data to support an accurate model, the models will typically disagree, the models are initialized differently and will make different predictions because there isn’t enough data. Thanks to that, we can leverage the regions when there is more disagreement and collect more data to improve the ensemble.
+Whenever there is enough data to support an accurate model, the ensemble of dynamics models will typically agree. When there is not enough data to support an accurate model, the models will typically disagree, the models are initialized differently and will make different predictions because there isn't enough data. Thanks to that, we can leverage the regions when there is more disagreement and collect more data to improve the ensemble.
 
 ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b5968c4a-ef47-4cf5-b121-ebc71d14f129/Untitled.png)
 

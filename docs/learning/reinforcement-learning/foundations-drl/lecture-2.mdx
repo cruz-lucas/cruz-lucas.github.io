@@ -14,8 +14,6 @@ These are my rough notes.
 
 Optimal Planning/Control
 
-$\downarrow$
-
 Given an $MDP(S,A,P,R,\gamma,H)$ find the optimal policy $\pi^*$
 
 | Limitations | How to address |
@@ -25,7 +23,7 @@ Given an $MDP(S,A,P,R,\gamma,H)$ find the optimal policy $\pi^*$
 
 ## Q-Values
 
-$Q^*(s,a) =$ expected utility starting in $s$, taking action $a%$, and acting optimally.
+$Q^*(s,a) =$ expected utility starting in $s$, taking action $a$, and acting optimally.
 
 ### Bellman Equation:
 
@@ -54,11 +52,11 @@ $$
 
 So the agent can experience samples:
 
-- For an state-action pair $(s,a)$, receive: $s’\sim P(s’|s,a)$
+- For an state-action pair $(s,a)$, receive: $s'\sim P(s'|s,a)$
 - Consider your old estimate: $Q_k(s,a)$
 - Consider your new sample estimate:
     
-    $target(s’) = R(s,a,s’) + \gamma \ \cdot \ \underset{a'}{max} \ Q_k(s',a')$
+    $target(s') = R(s,a,s') + \gamma \ \cdot \ \underset{a'}{max} \ Q_k(s',a')$
     
 - Incorporate the new estimate into a running average:
     
@@ -73,17 +71,17 @@ So the agent can experience samples:
 
 ### Q-Learning Properties
 
-- Q-Learning converges to optimal policy even if you’re action suboptimally.
+- Q-Learning converges to optimal policy even if you're action suboptimally.
 - This is called **off-policy learning**.
 - Caveats:
     - You have to explore enough.
     - You have to eventually make learning rate ($\alpha$) small enough.
         - Otherwise, the latest experiences will make you hop around too much with every update.
     - … but not decrease too quickly.
-        - You’ll not update enough.
+        - You'll not update enough.
 - Technical requirements:
     - All states and actions are visited infinitely often
-        - Basically, in the limit, it doesn’t matter how you select actions.
+        - Basically, in the limit, it doesn't matter how you select actions.
     - Learning rate schedule such that for all state and action pairs $(s,a)$:
 
 $$
@@ -92,7 +90,7 @@ $$
 
 ### Can Tabular Methods Scale?
 
-Continuous (by crude discretization) and even discrete environments (such as tetris and Atari) have huge state space and it’s not practical to have a table this large (tetris is $10^{60}$, humanoid is $10^{100}$).
+Continuous (by crude discretization) and even discrete environments (such as tetris and Atari) have huge state space and it's not practical to have a table this large (tetris is $10^{60}$, humanoid is $10^{100}$).
 
 ## Approximate Q-Learning
 
@@ -128,8 +126,11 @@ Source: https://doi.org/10.48550/arXiv.1312.5602
 - Uses Huber loss instead of squared loss on Bellman error.
 
 $$
-L_{\delta}=\begin{cases}\frac{1}{2}a^2 & for |a|\le \delta, \\ \delta(|a|-\frac{1}{2}\delta), & otherwise.\end{cases}
-
+L_{\delta}=
+\begin{cases}
+    \frac{1}{2}a^2 & for |a|\le \delta, \\
+    \delta(|a|-\frac{1}{2}\delta), & otherwise.
+\end{cases}
 $$
 
 - Uses RMSProp instead of vanilla SGD.
@@ -145,7 +146,7 @@ $$
 
 ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/98c40c31-0cce-498b-a99f-a0eb8fa393ea/Untitled.png)
 
-## Updates since Deepmind’s DQN
+## Updates since Deepmind's DQN
 
 ### Double QDN
 

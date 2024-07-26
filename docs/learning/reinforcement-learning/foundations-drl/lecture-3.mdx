@@ -31,7 +31,7 @@ $$
 $$
 
 <aside>
-💡 If the policy is deterministic, two policies can’t be close enough and optimization gets harder. But by allowing stochasticity, there’s this stochastic interpolation between them in the policy space, that will smooth the optimization. 
+💡 If the policy is deterministic, two policies can't be close enough and optimization gets harder. But by allowing stochasticity, there's this stochastic interpolation between them in the policy space, that will smooth the optimization. 
 
 Another reason to allow stochasticity is to incorporate exploration into the policy.
 
@@ -43,7 +43,7 @@ Another reason to allow stochasticity is to incorporate exploration into the pol
 
 - Often $\pi$ can be simpler than $Q$ or $V$.
     - E.g., robotic grasp.
-- $V$: doesn’t prescribe actions.
+- $V$: doesn't prescribe actions.
     - Would need a dynamics model to look ahead against the value function.
 - $Q$: need to be able to efficiently solve $\underset{u}{argmax} \ Q_{\theta}(s,u)$.
     - The challenge for continuous/high-dimensional action spaces.
@@ -72,7 +72,8 @@ Taking the gradient of $U(\theta)$ with relation to $\theta$ gives:
 
 $$
 \begin{align*}
-\nabla_\theta U(\theta) &= \nabla_\theta \displaystyle\sum_{\tau}P(\tau;\theta)R(\tau) \\ &= \displaystyle\sum_{\tau}\nabla_\theta P(\tau;\theta)R(\tau)
+\nabla_\theta U(\theta) &= \nabla_\theta \displaystyle\sum_{\tau}P(\tau;\theta)R(\tau) \\
+&= \displaystyle\sum_{\tau}\nabla_\theta P(\tau;\theta)R(\tau)
 \end{align*}
 $$
 
@@ -91,7 +92,7 @@ $$
 \end{align*}
 $$
 
-We have an expectation so we can compute a sample-based approximation. We don’t have to enumerate all possible trajectories, which would be impossible in realistic problems.
+We have an expectation so we can compute a sample-based approximation. We don't have to enumerate all possible trajectories, which would be impossible in realistic problems.
 
 Approximate with the empirical estimate for $m$ sample paths under policy $\pi_\theta$:
 
@@ -99,10 +100,10 @@ $$
 \nabla_\theta U(\theta) \approx \displaystyle \hat{g} = \frac{1}{m}\displaystyle\sum_{i=1}^m \nabla_\theta \log P(\tau^{(i)};\theta)R(\tau^{(i)})
 $$
 
-So, to get our gradient estimate, we’re gonna use our current setting of the parameters, do a bunch of rollouts, and then for each rollout, we’re going to compute grad log probability of the trajectory under the current parameter setting times the reward collected along that trajectory.
+So, to get our gradient estimate, we're gonna use our current setting of the parameters, do a bunch of rollouts, and then for each rollout, we're going to compute grad log probability of the trajectory under the current parameter setting times the reward collected along that trajectory.
 
 <aside>
-💡 Because of the probability distribution over trajectories, that’s inducing smoothness, we can still take gradients.
+💡 Because of the probability distribution over trajectories, that's inducing smoothness, we can still take gradients.
 
 </aside>
 
@@ -112,7 +113,7 @@ The intuition is that by controlling parameter setting $\theta$ we can increase 
 
 # Temporal Decomposition
 
-Let’s decompose the path into states and actions:
+Let's decompose the path into states and actions:
 
 $$
 \nabla_\theta\log P(\tau^{(i)}; \theta)=\nabla_\theta \log \bigg [ \displaystyle\prod_{t=0}^H \underbrace{P(s_{t+1}^{(i)}|s_t^{(i)}, u_t^{(i)})}_{\text{dynamics model}} \cdot \underbrace{\pi_\theta(u_t^{(i)}|s_t^{(i)})}_{\text{policy}} \bigg]
@@ -135,7 +136,7 @@ $$
 \end{align*}
 $$
 
-Because the first sum doesn’t have a dependency on $\theta$, the gradient has no dynamics model contribution.
+Because the first sum doesn't have a dependency on $\theta$, the gradient has no dynamics model contribution.
 
 ### Likelihood Ratio Gradient Estimate
 
@@ -161,7 +162,7 @@ $$
 \mathbb E[ \hat{g}] = \nabla_\theta U(\theta)
 $$
 
-- As formulated thus far: unbiased but very noisy. It’s sample-based and if you don’t have enough samples, it’s not going to be very precise. Fixes that lead to real-world practicality:
+- As formulated thus far: unbiased but very noisy. It's sample-based and if you don't have enough samples, it's not going to be very precise. Fixes that lead to real-world practicality:
     - Baseline
     - Temporal Structure
     - And next lecture: Trust region / natural gradient
@@ -224,7 +225,7 @@ $$
 \end{align*}
 $$
 
-On expectation, the extra term will be zero. So why care to add the term $b$? When there are finite samples, the estimate we’re accumulating will have a variance reduction effect.
+On expectation, the extra term will be zero. So why care to add the term $b$? When there are finite samples, the estimate we're accumulating will have a variance reduction effect.
 
 ## More Temporal Structure and Baseline
 
@@ -252,11 +253,11 @@ b
 $$
 
 <aside>
-💡 It’s ok for the baseline b to depend on $s_t^{(i)}$
+💡 It's ok for the baseline b to depend on $s_t^{(i)}$
 
 </aside>
 
-Splitting the reward into reward from the past and reward from the future, and rewards from the past are not relevant, and doing the math carefully we see that the expected value is zero. Hence, we remove terms that don’t contribute to remove variance and we have the practical equation for policy gradient:
+Splitting the reward into reward from the past and reward from the future, and rewards from the past are not relevant, and doing the math carefully we see that the expected value is zero. Hence, we remove terms that don't contribute to remove variance and we have the practical equation for policy gradient:
 
 $$
 \frac{1}{m}\displaystyle\sum_{i=1}^m 
@@ -291,7 +292,7 @@ b= \frac
 {\sum_{i} (\nabla_\theta \log P(\tau^{(i)};\theta))^2 }
 $$
 
-This is a weighted average of the reward by the square grad log of probability, hence, we’ll weight more heavily the high probability trajectories. Not seen so many.
+This is a weighted average of the reward by the square grad log of probability, hence, we'll weight more heavily the high probability trajectories. Not seen so many.
 
 - Time-dependent baseline:
 
@@ -354,7 +355,7 @@ V^\pi(s_t^{(i)}) -
 \Big)^2
 $$
 
-This is the way to go first because it’s simple, just a supervised learning problem.
+This is the way to go first because it's simple, just a supervised learning problem.
 
 ## Bootstrap Estimation of $V^\pi$
 
@@ -426,7 +427,7 @@ R(s_k^{(i)},u_k^{(i)}) - V^\pi(s_k^{(i)})
 \Bigg)
 $$
 
-The advantage is the difference between the reward experienced and the expected reward. But the reward experience is still a single sample estimate, it’s the estimation of Q from a single roll-out:
+The advantage is the difference between the reward experienced and the expected reward. But the reward experience is still a single sample estimate, it's the estimation of Q from a single roll-out:
 
 $$
 Q^\pi(s,u)=\mathbb E[r_0 + r_1 + r_2, ...|s_0=s,a_0=a]
@@ -481,6 +482,7 @@ Policy Gradient + Generalized Advantage Estimation:
     - Update:
     
     $$
+    \begin{gather}
     \phi_{i+1} \larr \min_\phi 
     
     \displaystyle\sum_{(s,u,s',r)}
@@ -517,6 +519,7 @@ Policy Gradient + Generalized Advantage Estimation:
     \hat{Q_i}(s_t^{(k)},u_t^{(k)}) - V_{\phi_i}^\pi(s_k^{(k)})
     
     \Bigg)
+    \end{gather}
     $$
     
 
@@ -528,43 +531,14 @@ Policy Gradient + Generalized Advantage Estimation:
 There are many variations of this algorithm, e. g. we could instead use a 1-step for V, and full roll-out for $\pi_\theta$:
 
 $$
-\phi_{i+1} \larr \min_\phi 
+\begin{gather}
+\phi_{i+1} \larr \min_\phi \displaystyle\sum_{(s,u,s',r)} \| r+ V^\pi_{\phi_i}(s') - V{\phi}(s) \|_2^2 + \lambda \| \phi - \phi_i \|_2^2 \\
 
-\displaystyle\sum_{(s,u,s',r)}
-
-\|
-r+
-
-V^\pi_{\phi_i}(s') - 
-
-V{\phi}(s)
-\|_2^2
-
-+ \lambda
-
-\|
-
-\phi - \phi_i
-
-\|_2^2\\
-
-\theta_{i+1} \larr \theta_i 
-
-+
-
-\alpha \frac{1}{m}
-
-\displaystyle\sum_{k=1}^m 
-
-\sum_{t=0}^{H-1}
-
-\nabla_\theta\log\pi_\theta(u_t^{(k)}| s_t^{(k)})
+\theta_{i+1} \larr \theta_i + \alpha \frac{1}{m} \displaystyle\sum_{k=1}^m  \sum_{t=0}^{H-1} \nabla_\theta\log\pi_\theta(u_t^{(k)}| s_t^{(k)})
 
 \Bigg (
-\sum_{t'=t}^{H-1}r^{(k)}_{t'}
- -
-
-V_{\phi_i}^\pi(s_{t'}^{(k)})
-
+\sum_{t'=t}^{H-1}r^{(k)}_{t'} - V_{\phi_i}^\pi(s_{t'}^{(k)})
 \Bigg)
+
+\end{gather}
 $$

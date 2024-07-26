@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 import ReactFlow, {
   Position,
   MarkerType,
@@ -42,18 +43,22 @@ function Flow() {
 
 
   return (
-    <div style={{ height: '400px', width: '100%' }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        fitView
-        fitViewOptions={fitViewOptions}
-        defaultEdgeOptions={defaultEdgeOptions}
-        proOptions={proOptions}
-        panOnDrag={panOnDrag}
-        preventScrolling={panOnDrag}
-      />
-    </div>
+    <BrowserOnly fallback={<div>Loading...</div>}>
+            {() => (
+        <div style={{ height: '400px', width: '100%' }}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            fitView
+            fitViewOptions={fitViewOptions}
+            defaultEdgeOptions={defaultEdgeOptions}
+            proOptions={proOptions}
+            panOnDrag={panOnDrag}
+            preventScrolling={panOnDrag}
+          />
+        </div>
+    )}
+    </BrowserOnly>
   );
 }
 

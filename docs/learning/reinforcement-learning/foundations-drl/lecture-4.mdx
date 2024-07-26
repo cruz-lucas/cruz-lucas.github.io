@@ -58,10 +58,12 @@ U(\theta) =
 $$
 
 The utility of theta is the expected reward when using policy  
-$\pi_\theta$. When we compute the gradient, we can collect trajectories with the old policy and see the directions that we need to improve, it doesn’t matter theta we are at. When we are at theta old, it turns out to be a standard policy gradient. If we are in theta far from theta old, we have high variance and need more data to estimate the gradient.
+$\pi_\theta$. When we compute the gradient, we can collect trajectories with the old policy and see the directions that we need to improve, it doesn't matter theta we are at. When we are at theta old, it turns out to be a standard policy gradient. If we are in theta far from theta old, we have high variance and need more data to estimate the gradient.
 
 $$
-\nabla_\theta U(\theta) = 
+\begin{align*}
+
+\nabla_\theta U(\theta) &= 
 
 \mathbb E_{\tau \sim \theta_{old}}
 
@@ -71,7 +73,6 @@ $$
 
 \Bigg] \\
 
-\begin{align*}
 
 \nabla_\theta U(\theta) |_{\theta=\theta_{\text{old}}} &= 
 
@@ -210,7 +211,7 @@ PPO is a family of policy gradient methods that aim to address some of the limit
 
 ## Proximal Policy Optimization V1 - “Dual Descent TRPO”
 
-What if we move the constraint into the objective? There is a value of beta which makes the two problems equivalent, that they’ll have the same solution. Now we have an optimization problem, and we can run it with Adam or another optimizer and iterate over that.
+What if we move the constraint into the objective? There is a value of beta which makes the two problems equivalent, that they'll have the same solution. Now we have an optimization problem, and we can run it with Adam or another optimizer and iterate over that.
 
 ### TRPO
 
@@ -244,7 +245,7 @@ $$
 
 ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cac8a3bb-0630-4810-8cbb-270ae1992948/Untitled.png)
 
-We can update the beta at the end of each iteration. If the KL is close to delta it won’t have much weight on the objective. If KL is much larger than delta we can crank up beta to pay more attention to the KL. If the KL is much smaller than delta, we can decrease the beta so that in the next optimization round it doesn’t pay as much attention to the KL as it did before.
+We can update the beta at the end of each iteration. If the KL is close to delta it won't have much weight on the objective. If KL is much larger than delta we can crank up beta to pay more attention to the KL. If the KL is much smaller than delta, we can decrease the beta so that in the next optimization round it doesn't pay as much attention to the KL as it did before.
 
 ## Proximal Policy Optimization V2 - “Clipped Surrogate Loss”
 
