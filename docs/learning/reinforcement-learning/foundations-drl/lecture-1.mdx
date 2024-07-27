@@ -5,6 +5,7 @@ slug: /drl/lecture-1
 ---
 import TimelineComponent from '@site/src/components/RL/Motivation'; 
 import Flow from '@site/src/components/RL/Mdp'; 
+import RobotGrid from '@site/src/components/RL/Grid'; 
 
 # Foundations of Reinforcement Learning
 
@@ -65,7 +66,10 @@ $$
 :::note Grid World
 Throughout the course, a canonical example called grid world will be used to build intuition about MDPs and reinforcement learning algorithms. In grid world, an agent navigates a grid to reach a goal while avoiding obstacles and pitfalls, with rewards assigned to reaching specific squares. This simple environment allows for fast experimentation and helps visualize optimal policies. The discount factor in grid world incentivizes the shortest path to the goal, demonstrating the importance of timely actions in maximizing rewards.
 
-![Grid world example. Source: Adapted from the lecture slides.](@site/static/img/learning/rl/grid-world-intro.png)
+In our grid world, the agent in this world can move in four directions, except into boundaries. If it lands on a minus-one square, it receives a reward of -1 and the episode ends; if it lands on a plus-one square, it receives a reward of +1 and the episode ends.
+
+{/* ![Grid world example. Source: Adapted from the lecture slides.](@site/static/img/learning/rl/grid-world-intro.png) */}
+<RobotGrid />
 
 :::
 
@@ -82,9 +86,8 @@ V^*(s) = \underset{\pi}{max}\ \mathbb E[\displaystyle\sum_{t=0}^H \gamma^t \cdot
 $$
 
 :::note Grid World
-To illustrate this, consider our grid world example. The agent in this world can move in four directions, except into boundaries. If it lands on a minus-one square, it receives a reward of -1 and the episode ends; if it lands on a plus-one square, it receives a reward of +1 and the episode ends.
 
-![Possible action in grid world. Source: Adapted from the lecture slides.](@site/static/img/learning/rl/grid-world-actions.png)
+{/* ![Possible action in grid world. Source: Adapted from the lecture slides.](@site/static/img/learning/rl/grid-world-actions.png) */}
 
 Let's imagine three different scenarios:
 

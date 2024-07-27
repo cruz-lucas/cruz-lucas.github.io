@@ -65,6 +65,7 @@
   box-sizing: border-box;
   cursor: -webkit-grab;
   cursor: grab;
+  max-width: 100px;
 }
 .react-flow__handle {
   position: absolute;
