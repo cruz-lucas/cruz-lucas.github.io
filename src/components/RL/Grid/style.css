@@ -1,0 +1,161 @@
+.grid_world {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    position: relative;
+}
+
+.up {
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+.middle-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.left, .down, .right {
+    margin: 0 5px;
+}
+
+.controls button {
+    padding: 10px;
+    font-size: 16px;
+    width: 50px;
+    aspect-ratio: 1 / 1;
+    border-radius: 10%;
+}
+
+.reset-button {
+    width: calc(3 * 50px + 2 * 10px); /* width of three buttons + two margins */
+    aspect-ratio: auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 10%;
+}
+
+.grid {
+    display: inline-block;
+    width: 80%;
+    max-width: 500px;
+    aspect-ratio: 4 / 3;
+    margin: 0 auto;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    flex: 1;
+    aspect-ratio: 1 / 1;
+    border: 2px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10%;
+    margin: 1%;
+    background-size: 70%; /* Adjust size as needed */
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.robot {
+    background-image: url('/static/img/profile.png');
+    background-size: cover;
+    background-color: #ffffff6f;
+}
+
+.start {
+    background-color: #ffffff6f;
+}
+
+.goal {
+    background-color: #ffe8a382;
+    border-color: #ffe8a3;
+    background-image: url('/static/img/learning/rl/grid-world/goal.png');
+}
+
+.penalty {
+    background-color: #ffc7c28b;
+    border-color: #ffc7c2;
+    background-image: url('/static/img/learning/rl/grid-world/penalty.png');
+}
+
+.obstacle {
+    background-color: #cccccc3f;
+    border-color: #cccccc;
+    background-image: url('/static/img/learning/rl/grid-world/obstacle.png');
+}
+
+.empty {
+    background-color: #ffffff6f;
+}
+
+.reward {
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.message {
+    display: flex;
+    position: absolute;
+    top: 10%;
+    font-size: 32px;
+    font-weight: bold;
+    animation: fadeout 1s forwards;
+}
+
+.message.positive {
+    color: green;
+}
+
+.message.negative {
+    color: red;
+}
+
+@keyframes fadeout {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .controls button {
+        font-size: 12px;
+        width: 40px;
+    }
+
+    .reset-button {
+        width: calc(3 * 40px + 2 * 8px); /* width of three buttons + two margins */
+    }
+
+    .message {
+        font-size: 24px;
+    }
+
+    .reward {
+        font-size: 16px;
+    }
+
+    .cell {
+        background-size: 60%; /* Adjust size for smaller screens */
+    }
+}
