@@ -6,28 +6,35 @@
     width: 100%;
 }
 
+.animation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
 .controls {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 30px;
     position: relative;
 }
 
-.up {
-    margin-bottom: 5px;
-    margin-top: 10px;
-}
-
-.middle-buttons {
+.controls .fields {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 5px;
+    flex-direction: column;
+    align-items: left;
+    /* margin-top: 30px; */
+    position: relative;
 }
 
-.left, .down, .right {
-    margin: 0 5px;
+.controls .fields input {
+    /* display: flex; */
+    /* flex-direction: column; */
+    align-items: center;
+    width: 50px;
 }
 
 .controls button {
@@ -36,15 +43,52 @@
     width: 50px;
     aspect-ratio: 1 / 1;
     border-radius: 10%;
+    border-width: 3px;
 }
 
-.reset-button {
-    width: calc(3 * 50px + 2 * 10px); /* width of three buttons + two margins */
-    aspect-ratio: auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 10%;
+.controls .reset {
+    width: 160px;
+    border-radius: 3%;
+    aspect-ratio: 3 / 1;
 }
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.button-group button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.button-group button i {
+    font-size: 16px;
+    color: #333;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #76c7c0;
+    transition: width 0.3s;
+}
+
 
 .grid {
     display: inline-block;
@@ -67,7 +111,11 @@
     justify-content: center;
     border-radius: 10%;
     margin: 1%;
-    background-size: 70%; /* Adjust size as needed */
+    font-size:x-large;
+}
+
+.cell.with-images {
+    background-size: 70%;
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -86,6 +134,10 @@
     background-color: #ffe8a382;
     border-color: #ffe8a3;
     background-image: url('/static/img/learning/rl/grid-world/goal.png');
+}
+
+.animation .cell {
+    background-image: none;
 }
 
 .penalty {
