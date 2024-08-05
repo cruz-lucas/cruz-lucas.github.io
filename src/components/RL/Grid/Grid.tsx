@@ -2,10 +2,12 @@ import React from 'react';
 import './style.css';
 
 type GridProps = {
-    gridValues: number[][];
+    gridValues?: number[][];
+    qValues?: number[][][];
     robotPosition?: { row: number, col: number };
-    showValues?: boolean;
     withImages?: boolean;
+    showValues?: boolean;
+    useQValues?: boolean;
 };
 
 const initialGrid = [
@@ -14,7 +16,7 @@ const initialGrid = [
     ['start', 'empty', 'empty', 'empty'],
 ];
 
-const Grid: React.FC<GridProps> = ({ gridValues, robotPosition, showValues = true, withImages = false }) => {
+const Grid: React.FC<GridProps> = ({ gridValues, qValues, robotPosition, withImages = false, showValues = true, useQValues = false }) => {
     return (
         <div className="grid">
             {initialGrid.map((row, rowIndex) => (
@@ -27,9 +29,19 @@ const Grid: React.FC<GridProps> = ({ gridValues, robotPosition, showValues = tru
                         if (withImages) {
                             className += ' with-images';
                         }
+
                         return (
                             <div className={className} key={colIndex}>
-                                {showValues && gridValues[rowIndex][colIndex].toFixed(2)}
+                                {useQValues && qValues ? (
+                                    <>
+                                        <div className="quadrant up">{showValues && qValues[rowIndex][colIndex][0].toFixed(2)}</div>
+                                        <div className="quadrant left">{showValues && qValues[rowIndex][colIndex][1].toFixed(2)}</div>
+                                        <div className="quadrant down">{showValues && qValues[rowIndex][colIndex][2].toFixed(2)}</div>
+                                        <div className="quadrant right">{showValues && qValues[rowIndex][colIndex][3].toFixed(2)}</div>
+                                    </>
+                                ) : (
+                                    showValues && gridValues[rowIndex][colIndex].toFixed(2)
+                                )}
                             </div>
                         );
                     })}

@@ -211,3 +211,37 @@
         background-size: 60%; /* Adjust size for smaller screens */
     }
 }
+
+/* Q-value display */
+.quadrant {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* .quadrant.up {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.quadrant.down {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.quadrant.left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.quadrant.right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+} */
