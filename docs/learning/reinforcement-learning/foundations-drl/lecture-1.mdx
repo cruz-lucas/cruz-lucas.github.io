@@ -5,7 +5,7 @@ slug: /drl/lecture-1
 ---
 import TimelineComponent from '@site/src/components/RL/Motivation'; 
 import Flow from '@site/src/components/RL/Mdp'; 
-import { PlayableGrid, AnimationGrid, StaticGrid } from '@site/src/components/RL/Grid'; 
+import { PlayableGrid, AnimationGrid, StaticGrid, AnimationQGrid } from '@site/src/components/RL/Grid'; 
 
 # Foundations of Reinforcement Learning
 
@@ -77,7 +77,7 @@ In our grid world, the agent in this world can move in four directions, if it tr
 
 ### Value Iteration
 
-**Optimal Value Function $V^*$**
+#### Optimal Value Function $V^*$
 
 The core concept of value iteration revolves around the optimal value function $V^*(s)$. This function represents the maximum expected discounted sum of rewards that can be achieved from state $s$ by following the optimal policy. Essentially, it quantifies the best possible outcome starting from any given state.
 
@@ -85,7 +85,7 @@ $$
 V^*(s) = \underset{\pi}{max}\ \mathbb E[\displaystyle\sum_{t=0}^H \gamma^t \cdot R(s_t, a_t, s_{t+1})|\pi, s_0=s]
 $$
 
-:::note Grid World
+::::note Grid World
 
 {/* ![Possible action in grid world. Source: Adapted from the lecture slides.](@site/static/img/learning/rl/grid-world-actions.png) */}
 
@@ -121,7 +121,6 @@ Let's imagine three different scenarios:
    - $V^*(3,3)$: Moving right has an 80% success rate. If successful, the value is $0.9 \times 1$. With a 20% chance, the agent may stay in place (trying to move up), move down or move left, affecting the value recursively based on neighboring squares.
 
 This recursive dependency on neighboring values is the essence of value iteration. The value of each state is updated based on expected values from possible actions and their outcomes, iterating until convergence.
-:::
 
 :::info Algorithm
 
@@ -138,15 +137,19 @@ $$
 
 :::
 
+
 In the simulation below, we visualize the process of value iteration in a grid world environment. The agent attempts to learn the optimal policy by iteratively updating the values of each state. The noise parameter represents the probability of the agent taking a suboptimal action instead of the best one.
 
 <AnimationGrid />
 
-**Value Iteration Convergence**
+
+::::
+
+#### Value Iteration Convergence
 
 Value iteration demonstrates a key property: **convergence**. As iterations progress, the value function gradually stops changing, indicating convergence. This means that running the algorithm long enough will yield a stationary optimal policy and the infinite horizon value, even without needing to run infinite iterations. The speed of convergence is influenced by the discount factor $\gamma$. A lower discount factor (closer to 0) accelerates convergence, while a higher discount factor (closer to 1) slows it down.
 
-:::note Theorem
+:::warning Theorem
 Value iteration converges. At convergence, we have found the optimal value function $V^*$ for the discounted infinite horizon problem, which satisfies the Bellman equations.
 
 $$
@@ -170,13 +173,15 @@ $$
 $V^*(s)$ represents the expected sum of rewards starting from state $s$ and acting optimally over infinite steps. Similarly, $V^*_H(s)$ is the expected sum of rewards starting from state $s$ and acting optimally over $H$ steps. The additional rewards collected beyond $H$ steps can be expressed as a geometric series, discounted by $\gamma$:
 
 $$
+\begin{gather*}
 \gamma^{H+1}R(s_{H+1})+\gamma^{H+2}R(s_{H+2})+\cdots
 
 \le
 
-\gamma^{H+1}R_{\max} + \gamma^{H+2}R_{\max} + \cdots
+\gamma^{H+1}R_{\max} + \gamma^{H+2}R_{\max} + \cdots =\\
 
 = \frac{\gamma^{H+1}}{1-\gamma}R_{\max}
+\end{gather*}
 $$
 
 Where $R_{\text{max}}$ is the maximum possible reward. As the horizon $H$ increases, $\gamma^{H+1}$ shrinks because $\gamma$ is less than 1. Consequently, the difference between the optimal value $V^*$ for infinite horizon and the optimal value $V^*_H$ for finite horizon $H$ decreases, becoming negligible as $H$ grows larger. This guarantees that value iteration converges, as the difference between $V^*$ and $V^*_H$ approaches zero.
@@ -212,3 +217,27 @@ $$
 :::
 
 ::::
+
+#### Q-Value Iteration
+
+Having explored the concept of value iteration for states, we now turn to another important concept in reinforcement learning: Q-values. This will be a foundation of many advanced algorithms we'll explore in the next lectures.
+
+A Q-value, $Q^*(s, a)$, represents the expected discounted sum of rewards starting from state $s$, taking action $a$, and thereafter acting optimally. Essentially, it's similar to a value function, but it considers the value of committing to a specific action in a given state.
+
+The Bellman equation can also be applied to Q-values. The optimal Q-value for being in state $s$ and taking action $a$ can be expressed as:
+
+$$
+Q^*(s, a) = \sum_{s'} P(s'| s,a) (R(s, a, s') + \gamma \max_{a'} Q^*(s', a'))
+$$
+
+Q-value iteration:
+
+$$
+Q_{k+1}^*(s, a) \larr \sum_{s'} P(s'| s,a) (R(s, a, s') + \gamma \max_{a'} Q_{k}^*(s', a'))
+$$
+
+:::note Grid-World
+
+{/* <AnimationQGrid /> */}
+
+:::
