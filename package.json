@@ -16,10 +16,10 @@
   },
   "dependencies": {
     "@algolia/client-search": "^4.24.0",
-    "@docusaurus/core": "3.4.0",
-    "@docusaurus/plugin-google-gtag": "^3.4.0",
-    "@docusaurus/plugin-google-tag-manager": "^3.4.0",
-    "@docusaurus/preset-classic": "3.4.0",
+    "@docusaurus/core": "^3.5.1",
+    "@docusaurus/plugin-google-gtag": "^3.5.1",
+    "@docusaurus/plugin-google-tag-manager": "^3.5.1",
+    "@docusaurus/preset-classic": "^3.5.1",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@fortawesome/fontawesome-free": "^6.6.0",
@@ -28,11 +28,14 @@
     "@mui/styles": "^5.16.4",
     "@types/react": "^18.3.3",
     "clsx": "^2.0.0",
+    "plotly.js": "^2.34.0",
     "prism-react-renderer": "^2.3.0",
     "react": "^18.0.0",
     "react-chrono": "^2.6.1",
     "react-dom": "^18.0.0",
     "react-icons": "^5.2.1",
+    "react-latex-next": "^3.0.0",
+    "react-plotly.js": "^2.6.0",
     "reactflow": "^11.11.4",
     "rehype-katex": "7",
     "remark-math": "6",
@@ -40,9 +43,9 @@
     "search-insights": "^2.15.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.4.0",
-    "@docusaurus/tsconfig": "3.4.0",
-    "@docusaurus/types": "3.4.0",
+    "@docusaurus/module-type-aliases": "^3.5.1",
+    "@docusaurus/tsconfig": "^3.5.1",
+    "@docusaurus/types": "^3.5.1",
     "typescript": "~5.2.2"
   },
   "browserslist": {

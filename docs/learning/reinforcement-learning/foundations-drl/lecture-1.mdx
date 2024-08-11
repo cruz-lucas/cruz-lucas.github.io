@@ -6,6 +6,7 @@ slug: /drl/lecture-1
 import TimelineComponent from '@site/src/components/RL/Motivation'; 
 import Flow from '@site/src/components/RL/Mdp'; 
 import { PlayableGrid, AnimationGrid, StaticGrid, AnimationQGrid } from '@site/src/components/RL/Grid'; 
+import {EntropyGraph, InteractiveGraph} from '@site/src/components/RL/Graphs'; 
 
 # Foundations of Reinforcement Learning
 
@@ -36,8 +37,8 @@ The key components that define an MDP are:
 
 1. **Set of States ($S$):** The different situations the agent can encounter.
 2. **Set of Actions ($A$):** The possible actions the agent can take.
-3. **Transition Function ($P(s'\|s,a)$):** This defines the probability of transitioning to a new state (s') given the current state (s) and action (a).
-4. **Reward Function ($R(s,a,s')$):** This assigns a reward based on the transition from state s to state s' via action a.
+3. **Transition Function ($P(s'|s,a)$):** This defines the probability of transitioning to a new state $s'$ given the current state $s$ and action $a$.
+4. **Reward Function ($R(s,a,s')$):** This assigns a reward based on the transition from state $s$ to state $s'$ via action $a$.
 5. **Start State ($s_0$):** The initial state or distribution of states where the agent begins.
 6. **Discount Factor ($\gamma$):** This factor accounts for the preference of immediate rewards over future rewards. For example, if rewards are monetary, money available now can be invested to grow, making future money less valuable in comparison. Thus, future rewards are discounted.
 7. **Horizon ($H$):** The length of time over which the agent will operate and make decisions.
@@ -47,7 +48,7 @@ The key components that define an MDP are:
 The goal is for the agent to learn a policy that maximizes its expected discounted reward over time:
 
 $$
-\underset{\pi}{max}\ \mathbb E[\displaystyle\sum_{t=0}^H \gamma^t \cdot R(S_t, A_t, S_{t+1})|\pi]
+\underset{\pi}{max}\ \mathbb E \bigg[\displaystyle\sum_{t=0}^H \gamma^t \cdot R(S_t, A_t, S_{t+1})|\pi \bigg]
 $$
 
 :::
@@ -160,7 +161,7 @@ $$
 
 :::
 
-Running value iteration until convergence produces $V^*$, from which we can extract the optimal action using the Bellman equation or by storing the optimal action during the algorithm’s execution. Importantly, the infinite horizon policy is stationary: the optimal action for any state $s$ remains the same over time. This efficiency in storage means we only need to store an action for each state, not for each time step, creating a convenient policy $\pi^*$ that prescribes the optimal action for each state.
+Running value iteration until convergence produces $V^*$, from which we can extract the optimal action using the Bellman equation or by storing the optimal action during the algorithm's execution. Importantly, the infinite horizon policy is stationary: the optimal action for any state $s$ remains the same over time. This efficiency in storage means we only need to store an action for each state, not for each time step, creating a convenient policy $\pi^*$ that prescribes the optimal action for each state.
 
 $$
 \pi^*(s)=\underset{a\ \in\ A}{\operatorname{argmax}}
@@ -168,7 +169,9 @@ $$
 \sum_{s'}T(s,a,s')[R(s,a,s')+\gamma V^*(s')]
 $$
 
-::::info Why does value iteration converge?
+<details>
+<summary>Why does value iteration converge?</summary>
+
 
 $V^*(s)$ represents the expected sum of rewards starting from state $s$ and acting optimally over infinite steps. Similarly, $V^*_H(s)$ is the expected sum of rewards starting from state $s$ and acting optimally over $H$ steps. The additional rewards collected beyond $H$ steps can be expressed as a geometric series, discounted by $\gamma$:
 
@@ -216,7 +219,8 @@ $$
 
 :::
 
-::::
+</details>
+
 
 #### Q-Value Iteration
 
@@ -236,8 +240,379 @@ $$
 Q_{k+1}^*(s, a) \larr \sum_{s'} P(s'| s,a) (R(s, a, s') + \gamma \max_{a'} Q_{k}^*(s', a'))
 $$
 
-:::note Grid-World
+{/* :::note Grid-World
 
-{/* <AnimationQGrid /> */}
+<AnimationQGrid />
+
+::: */}
+
+### Policy Iteration
+
+After covering value iteration, both based on state values (V-values) and action values (Q-values), we turn to another method in reinforcement learning: policy iteration. While value iteration is effective for solving small MDPs by looping through all states and actions, policy iteration offers an alternative approach that is particularly useful in different situations. Some advanced methods we'll explore later will be built on value iteration, while others will rely on policy iteration. Understanding both methods provides a solid foundation for tackling various types of problems.
+
+#### Policy Evaluation
+
+The first step in policy iteration is policy evaluation. Unlike value iteration, where we seek to maximize the expected reward by evaluating all possible actions, policy evaluation fixes the policy $\pi$. In this step, we evaluate the fixed policy by running value iteration-like updates without taking the maximum over actions. This process gradually gives us the value function $V^\pi(s)$ for the given policy $\pi$ across all states, assuming an infinite horizon.
+
+The policy evaluation formula is:
+
+$$
+V_{k+1}^\pi (s) \leftarrow \sum_{s'}\sum_a \pi(a|s) P(s'|s,a) \left[ R(s,a,s') + \gamma V^\pi_k(s') \right]
+$$
+
+This equation calculates the value of each state by considering the probability of taking an action $a$ under the policy $\pi$, transitioning to a future state $s'$, and receiving a reward $R(s,a,s')$, while also accounting for the discounted future value $V^\pi_k(s')$. At convergence, this process gives us the value function for the specific policy $\pi$.
+
+#### Policy Iteration Process
+
+Policy iteration alternates between policy evaluation and policy improvement. Here's how it works:
+
+1. **Policy Evaluation:** Start with an initial policy $\pi_k$ and evaluate it using the formula below. This gives us the value function for the current policy across all states.
+
+$$
+V_{k+1}^{\pi_k} (s) \leftarrow \sum_{s'} P(s'|s,\pi_k(s)) \left[ R(s,a,s') + \gamma V_i^{\pi_k}(s') \right]
+$$
+
+2. **Policy Improvement:** After evaluating the policy, use the value function to improve the policy. The improvement step involves looking one step ahead to find the action that maximizes the expected reward plus the discounted future value. This new action becomes the updated policy $\pi_{k+1}$ for each state $s$.
+
+$$
+\pi_{k+1}(s) = \argmax_a \sum_{s'} P(s'|s,a) [R(s,a,s')+\gamma V^{\pi_k}(s')]
+$$
+
+3. **Iteration:** Repeat the process—evaluate the new policy $\pi_{k+1}$, then improve it again. This cycle continues until the policy converges to the optimal policy $\pi^*$.
+
+The policy improvement step essentially performs a value iteration update but focuses on the best action at each state based on the current policy's evaluation. The updated policy for each state $s$ is determined by the action that maximizes the expected immediate reward and the future discounted value.
+
+
+<details>
+<summary>Efficiency trade-offs</summary>
+
+
+**Policy iteration converges to the optimal policy $\pi^*$ through this iterative process.**
+
+Interestingly, it often converges in fewer outer iterations than value iteration. However, the trade-off is that within each outer iteration, multiple inner iterations (similar to value iteration) are performed during the policy evaluation phase. This means that although policy iteration may require fewer overall iterations, it involves more computational work within each iteration.
+
+</details>
+
+
+::::warning Theorem
+Policy iteration is guaranteed to converge and at convergence, the current policy and its value function are the optimal policy and the optimal value function.
+
+:::tip Intuition behind convergence
+
+To understand why policy iteration converges and guarantees an optimal policy, let's break down the process and build some intuition.
+
+#### Convergence Guarantee
+
+Policy iteration consists of two main steps: policy evaluation and policy improvement. The key to understanding why policy iteration converges lies in the fact that each iteration improves the policy. Here's why:
+
+1. **Policy Improvement:** At every step, policy iteration selects a new policy that is strictly better than the previous one. This improvement is achieved through a "one-step lookahead," where the algorithm evaluates all possible actions from the current state and chooses the one that maximizes the expected reward. This ensures that the new policy is at least as good as, and typically better than, the current one.
+
+2. **Finite Number of Policies:** In any given finite environment, there are only a limited number of possible policies. Since each iteration of policy improvement leads to a strictly better policy, the process cannot revisit a previous policy. This means that after a certain number of iterations—specifically, no more than the total number of possible policies—the algorithm must converge, as there are no more new policies to improve upon.
+
+#### Why Convergence Leads to Optimality
+
+Once policy iteration converges, the resulting policy is optimal. Here's the intuition:
+
+1. **Optimality at Convergence:** At convergence, the policy $\pi_{k+1}$ is identical to $\pi_k$ across all states. This means that the action prescribed by $\pi_k$ is already the one that maximizes the expected reward, considering both the immediate reward and the discounted future rewards. This condition satisfies the Bellman optimality equation.
+
+2. **Satisfying the Bellman Equation:** The Bellman equation is a fundamental principle in dynamic programming, which, when satisfied, indicates that the value function is optimal, denoted as $V^*$. In policy iteration, when the policy no longer changes, it implies that the Bellman equation holds true, confirming that the current policy is indeed optimal.
+
+3. **Beyond One-Step Improvement:** The one-step lookahead in policy iteration isn't just a single improvement step. When applied iteratively across all states, it results in a cumulative effect that optimizes the policy across the entire state space. The algorithm improves not only the immediate action but also how the policy performs in the long run.
 
 :::
+
+::::
+
+## Maximum Entropy Formulation
+
+So far, we've covered two fundamental methods for solving Markov Decision Processes (MDPs): value iteration and policy iteration. These methods serve as the foundation for many of the algorithms we'll explore in future lectures, particularly those designed to tackle larger-scale problems. However, it's important to introduce another formulation for solving or framing MDPs: **the maximum entropy formulation**.
+
+
+<details>
+<summary>What is Entropy?</summary>
+
+Entropy, in the context of information theory, is a measure of uncertainty or randomness in a random variable $X$. It's defined as the expected amount of information (measured in bits) required to encode the variable. The mathematical expression for the entropy $ \mathcal{H}(X) $ of a random variable $X$ with a probability distribution $P$ is:
+
+$$
+\mathcal{H}(X) = \sum_i p(x_i) \log_2\frac{1}{p(x_i)} = - \sum_i p(x_i) \log_2 p(x_i)
+$$
+
+This equation sums over all possible values $x_i$ that the random variable $X$ can take, weighted by the probability $p(x_i)$ of each value. The result gives us a measure of the average uncertainty associated with $X$.
+
+To break it down further:
+- If a particular value of $X$ is **very likely**, it can be encoded with **fewer bits** because it occurs frequently.
+- Conversely, **less likely** values require **more bits** to encode.
+
+</details>
+
+
+### The Concept of Maximum Entropy
+
+The maximum entropy approach asks a different question: Instead of finding a single optimal policy, what if we could find a distribution over near-optimal solutions? This means rather than pinpointing just one "best" behavior, we aim to identify a distribution that assigns higher probabilities to good behaviors and lower probabilities to less effective ones. This approach provides several advantages:
+
+1. **More Robust Policies:** A distribution over possible behaviors leads to a more robust policy. If the optimal path becomes blocked or unavailable due to changes in the environment, the distribution allows the agent to fall back on other near-optimal behaviors, maintaining high performance despite the disruption.
+
+2. **More Robust Learning:** In larger-scale problems, where the solution process involves iterative learning with data collection, a maximum entropy approach can improve exploration. If a policy is too deterministic and highly optimized, it may collect less diverse data, potentially missing out on discovering better solutions. By introducing more variation in behavior, the maximum entropy approach encourages better exploration, which can lead to finding better optima as the policy improves over time.
+
+
+:::tip Examples
+
+To better understand the concept of entropy in the context of random variables, let's look at some examples.
+
+#### Binary Random Variable
+
+Consider a binary random variable $X$ that can take on two values, 0 or 1. The probability $P(X = 1)$ is a number between 0 and 1. The entropy of this distribution is highest when the probability is 0.5, which corresponds to the maximum uncertainty about what the value of $X$ will be. At this point, we have no preference for either outcome, meaning that both 0 and 1 are equally likely, as seen in the graph below:
+
+<EntropyGraph/>
+
+#### Histograms
+
+Now, let's compare two histograms to understand how entropy works in practice. Imagine two different distributions represented by these histograms. **The question is: which histogram has a higher entropy?**
+
+Click on the one you think has the higher entropy
+
+<InteractiveGraph />
+
+<details>
+
+<summary>Explanation</summary>
+- **Histogram on the Left:** This histogram shows a more evenly distributed set of outcomes, meaning there's significant uncertainty about which value the random variable might take. This uncertainty results in higher entropy.
+
+- **Histogram on the Right:** In contrast, the histogram on the right shows a distribution where one value is overwhelmingly likely, leading to lower uncertainty and, therefore, lower entropy.
+
+<details>
+<summary>Show me the math</summary>
+$$                                
+\begin{align*}
+\text{Graph 1}&\\\\
+p(S) &= \{0.25, 0.25, 0.25, 0.125, 0.125\} \\\\
+H &= 3 \times 0.25 \times \log_2 4 + 2 \times 0.125 \times \log_2 8 \\
+&= 1.5 + 0.75 = 2.25\\\\
+
+\text{Graph 2}&\\\\
+p(s) &= \{0.75, 0.0625, 0.0625, 0.0625, 0.0625\} \\\\
+H &= 0.75 \times \log_2 \left(\frac{4}{3}\right) + 4 \times 0.0625 \times \log_2 16 \\
+&= 0.3 + 1 = 1.3
+\end{align*}
+$$
+</details>
+</details>
+
+:::
+
+### Maximum Entropy MDP
+
+Now that we have a basic understanding of entropy, which measures the amount of uncertainty or variability in the outcome of a distribution, we can apply this concept to Markov Decision Processes (MDPs).
+
+In a traditional MDP, the goal is to maximize the expected sum of rewards over time, which can be expressed as:
+
+$$
+\max_\pi \mathbb{E}\bigg[ \sum_{t=0}^H r_t \bigg]
+$$
+
+This objective focuses solely on accumulating as much reward as possible, possibly including a discount factor (not shown here for simplicity).
+
+In contrast, a **Maximum Entropy MDP** adds an additional term to the objective function. Instead of just maximizing the sum of rewards, it also considers the entropy of the policy. The objective function becomes:
+
+$$
+\max_\pi \mathbb{E}\bigg[ \sum_{t=0}^H r_t + \beta \mathcal{H}(\pi(\cdot|s_t)) \bigg]
+$$
+
+Here, $\mathcal{H}(\pi(\cdot|s_t))$ represents the entropy of the policy at state $s_t$, and $\beta$ is a trade-off factor that balances the importance of maximizing reward against maintaining high entropy in the policy. This term encourages the policy to remain stochastic rather than deterministic. In a purely deterministic policy, the entropy would be zero, which is not desirable in this context.
+
+This has several implications:
+
+1. **Trade-Off Between Reward and Entropy:** The factor $\beta$ determines how much emphasis is placed on maximizing entropy relative to maximizing reward. A higher $\beta$ prioritizes a more diverse range of actions, potentially at the cost of collecting less reward. Conversely, a lower $\beta$ (or $\beta = 0$) focuses solely on reward maximization, disregarding entropy.
+
+2. **Performance vs. Robustness:** At first glance, introducing a trade-off that potentially reduces reward might seem counterproductive. However, as discussed earlier, policies that consider entropy can lead to more robust learning and more robust policies. By keeping the policy stochastic for a longer period during training, the agent is likely to explore more effectively, leading to better overall performance in the long run. This exploration can prevent the policy from getting stuck in suboptimal solutions and improve trial-and-error learning.
+
+3. **Adaptability:** A policy that maximizes entropy is less rigid and more adaptable to changes in the environment. If the environment shifts, the policy's inherent flexibility allows it to switch to alternative actions more readily, rather than being locked into a single deterministic choice for each state.
+
+#### Maximum Entropy for 1-Step Problem
+
+Consider a one-step problem where we want to maximize the expected reward while also maintaining high entropy in the policy. The objective function for this problem is:
+
+$$
+\max_\pi \mathbb{E}\left[ r(a) + \beta \mathcal{H}(\pi(\cdot|s)) \right]
+$$
+
+Here, $\pi(a)$ is the policy, represented as a distribution over possible actions, and $\mathcal{H}(\pi(\cdot|s))$ is the entropy of the policy. The goal is to balance maximizing the reward $r(a)$ with maintaining high entropy, controlled by the trade-off parameter $\beta$.
+
+Since $\pi(a)$ represents a probability distribution, its entries must sum to one. This constraint leads us to form a Lagrangian for this problem, which we then optimize by setting the derivatives with respect to $\pi(a)$ and $\lambda$ (the Lagrange multiplier) to zero.
+
+<details>
+
+<summary>Constrained Optimization and Lagrangian Recap</summary>
+
+Constrained optimization involves maximizing an objective function subject to one or more constraints. In simple terms, you want to find the best possible solution while adhering to certain restrictions.
+
+The general form of a constrained optimization problem is:
+
+$$
+\begin{aligned}
+\text{max} \quad & f(x) \\
+\text{s.t.} \quad & g(x) = 0
+\end{aligned}
+$$
+
+Where $ f(x) $ is the objective function we aim to maximize, and $ g(x) = 0 $ represents the constraints that limit our choices for $ x $.
+
+#### The Lagrange Multiplier
+
+To solve such problems, we often use the method of **Lagrange Multiplier**. This method introduces a new variable, $ \lambda $, known as the Lagrange multiplier, and reformulates the problem into a max-min problem:
+
+$$
+\max_{x} \min_{\lambda} \mathcal{L}(x, \lambda) = f(x) + \lambda g(x)
+$$
+
+In this equation, $ \mathcal{L}(x, \lambda) $ is the Lagrangian, which combines the original objective function $ f(x) $ with the constraint $ g(x) $ weighted by the Lagrange multiplier $ \lambda $. This approach transforms the constrained optimization problem into a problem that can be solved by finding the optimal values of both $ x $ and $ \lambda $.
+
+#### Gradients in Optimization
+
+One of the key results in constrained optimization is that at the optimum, the gradient (or derivative) of the Lagrangian with respect to both $ x $ and $ \lambda $ must be zero. Mathematically, this is expressed as:
+
+$$
+\begin{aligned}
+
+\frac{\partial \mathcal{L}(x, \lambda)}{\partial x} &= 0 \\
+\frac{\partial \mathcal{L}(x, \lambda)}{\partial \lambda} &= 0
+
+\end{aligned}
+$$
+
+
+These conditions ensure that we have found a point where the objective function is maximized, given the constraints. In other words, the solution lies at a point where the trade-offs between maximizing the objective and satisfying the constraints are perfectly balanced.
+
+
+</details>
+
+Solving this optimization problem yields the optimal Max-Ent policy:
+
+$$
+\pi(a) = \frac{1}{Z} \exp\left(\frac{1}{\beta} r(a)\right)
+$$
+
+Where $Z$ is a normalization constant ensuring that the probabilities sum to one:
+
+$$
+Z = \sum_{a} \exp\left(\frac{1}{\beta} r(a)\right)
+$$
+
+
+<details>
+<summary>Policy Deviration</summary>
+$$
+\begin{align*}
+\max_{\pi(a)} \quad& \mathbb{E}[r(a) + \beta \mathcal{H}(\pi(a))] \\
+\max_{\pi(a)} \quad& \sum_a\pi(a)r(a) - \beta \sum_a\pi(a)\log\pi(a) \\
+\max_{\pi(a)}\min_\lambda \mathcal{L}(\pi(a),\lambda) =& \sum_a \pi(a)r(a) - \beta \sum_a \pi(a) \log \pi(a) + \lambda \bigg(\sum_a\pi(a)-1 \bigg)\\\\
+\end{align*}
+$$
+
+$$
+\begin{gather*}
+\frac{\partial}{\partial\pi(a)} \mathcal{L}(\pi(a), \lambda) = 0 \\
+\frac{\partial}{\partial\pi(a)} \sum_a \pi(a)r(a) - \beta \sum_a \pi(a) \log \pi(a) + \lambda \bigg(\sum_a\pi(a)-1 \bigg) = 0\\
+r(a) - \beta \log \pi(a) + \lambda = 0 \\
+\beta \log \pi(a) = r(a) - \beta + \lambda \\
+\pi(a) = \exp\bigg[ \frac{1}{\beta}(r(a)-\beta+\lambda) \bigg] \\\\
+\end{gather*}
+$$
+
+$$
+\begin{gather*}
+\frac{\partial}{\partial\lambda} \mathcal{L}(\pi(a), \lambda) = 0 \\
+\sum_a \pi(a) - 1 = 0
+\end{gather*}
+$$
+</details>
+
+
+This solution has a few key features:
+
+- **Exponential Reward Weighting:** The probability of taking an action is proportional to the exponentiated reward associated with that action. Actions with higher rewards have higher probabilities, while those with lower or negative rewards have lower probabilities.
+
+- **Role of Beta:** The parameter $\beta$ controls the trade-off between reward maximization and entropy. As $\beta$ increases, the policy favors higher entropy, leading to a more uniform distribution over actions. Conversely, as $\beta$ decreases (approaching zero), the policy becomes more deterministic, heavily favoring actions with the highest rewards.
+
+The optimal value under this Max-Ent formulation is given by the softmax of the rewards:
+
+$$
+V = \beta \log \sum_{a} \exp\left( \frac{1}{\beta} r(a) \right)
+$$
+
+This equation represents a softmax operation on the rewards, where the sharpness of the softmax depends on $\beta$:
+- **High Beta:** Leads to a soft softmax, with more uniform probabilities across actions.
+- **Low Beta:** Leads to a sharper softmax, closely approximating the standard maximum operation.
+
+<details>
+<summary>Value Derivation</summary>
+
+We substitute $\pi(a)$ in the value equation:
+
+$$
+\begin{align*}
+V &= \sum_a \frac{1}{Z} \exp\left(\frac{1}{\beta} r(a)\right) r(a) - \beta \sum_a \frac{1}{Z} \exp\left(\frac{1}{\beta} r(a)\right) \underbrace{\log \bigg( \frac{1}{Z} \exp\left(\frac{1}{\beta} r(a)\right) \bigg)}_{\log(\exp\frac{1}{\beta} r(a)) + \log(\frac{1}{Z})} \\
+&= \sum_a \frac{1}{Z} \exp\left(\frac{1}{\beta} r(a)\right) \bigg (r(a) - \underbrace{\beta \log \bigg( \exp\left(\frac{1}{\beta} r(a)\right) \bigg)}_{r(a)} \bigg) -\beta \sum_a \frac{1}{Z} \exp\left(\frac{1}{\beta} r(a)\right) \log \frac{1}{Z}\\
+&= 0 - \beta \log\bigg( \frac{1}{Z}\bigg) \underbrace{\sum_a \frac{1}{Z} \exp \bigg( \frac{1}{\beta} r(a)\bigg)}_{1} \\
+&= -\beta \log \frac{1}{Z} \\
+&= \beta \log \sum_a \exp\left(\frac{1}{\beta}r(a)\right) \Rightarrow \text{softmax}
+\end{align*}
+$$
+
+</details>
+
+### Maximum Entropy Value Iteration
+
+Now, let's consider how this approach can be applied to multi-step MDPs. In multi-step settings, our goal is to maximize not just the immediate reward and entropy but also the cumulative future rewards. This leads us to the Max-Ent Bellman equation, which is a modification of the traditional Bellman equation.
+
+Given the Max-Ent formulation and general objective:
+$$
+\max_\pi \mathbb{E} \bigg[ \sum_{t=0}^H r_t + \beta \mathcal{H(\pi(\cdot|s_t))}\bigg]
+$$
+
+The 1-step update:
+
+$$
+V_k(s) = \max_\pi \mathbb{E} \bigg[ \sum^H_{t=H-k} r(s_t, a_t) + \beta \mathcal{H}(\pi(a_t|s_t)) \bigg]
+$$
+
+The Max-Ent Bellman equation is formulated as follows:
+
+$$
+\begin{align*}
+V_k(s) &= \max_\pi \mathbb{E} \bigg[ r(s,a) + \beta \mathcal{H}(\pi(a|s)) + V_{k-1}(s') \bigg] \\
+&= \max_\pi \mathbb{E} \bigg[ Q_k(s,a) + \beta \mathcal{H}(\pi(a|s)) \bigg]
+\end{align*}
+$$
+
+where the Q-values are defined by:
+
+$$
+Q_k(s, a) = \mathbb{E}[r(s, a) + V_{k-1}(s')]
+$$
+
+Therefore, we can write the new Bellman equation as the 1-step problem equation replacing the reward for the Q-value:
+
+$$
+\begin{gather*}
+V_k(s) = \beta \log \sum_a \exp \big( \frac{1}{\beta} Q_k(s,a) \big) \\\\
+\pi_k(a|s) = \frac{1}{Z} \exp \big( \frac{1}{\beta} Q_k(s,a) \big)
+\end{gather*}
+$$
+
+Here:
+- $V_k(s)$ represents the value function at step $k$.
+- $Q_k(s, a)$ is the expected reward for taking action $a$ in state $s$, plus the discounted future value.
+- pi_k(a|s)$ is resulting policy from this value iteration process is also a Softmax distribution over the Q-values.
+- The Softmax operation is applied to the Q-values, where the sharpness of the Softmax is controlled by the temperature parameter $\beta$.
+
+## Recap of Lecture 1
+
+In this first lecture, we covered several foundational topics:
+- **Motivation:** We explored why Deep Reinforcement Learning (RL) is an exciting and impactful area of study.
+- **Markov Decision Processes (MDPs):** We introduced MDPs as the formal framework underlying RL methods.
+- **Exact Solution Methods:** We delved into two exact solution methods for traditional MDPs: value iteration and policy iteration.
+- **Maximum Entropy Formulation:** We introduced the Max-Ent formulation, which modifies traditional value iteration and policy iteration by incorporating entropy, leading to stochastic policies.
+
+
+The methods we've discussed so far are well-suited for small MDPs where it's feasible to loop over all states and actions and perform Bellman updates, whether through hard maxes or Softmaxes. However, most practical MDPs involve a vast number of states, making it impractical to iterate over all possible states and actions directly. The subsequent lectures in this series will focus on how to address this challenge, building on the foundations we've already established.

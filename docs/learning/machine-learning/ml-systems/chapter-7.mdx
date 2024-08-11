@@ -6,5 +6,37 @@ slug: /ml-systems/chapter-7
 
 # Model Deployment and Prediction Service
 
-During development, our model runs in a development environment. To be deployed, the model can go to a staging environment for testing or to a production environmnet to be used by the end users.
 
+In many companies, the team that develops the models is also responsible for deploying them. In others, once the model is ready for deployment, it is exported and handed off to a different team (e.g., DevOps, MLOps, Data Platform) for deployment. This separation can lead to high communication overhead across teams and slow down model updates. It can also complicate debugging when issues arise.
+
+:::tip Exporting a model
+Exporting a model involves converting it into a format usable by another application, a process called "serialization." Two parts of a model can be serialized: the model definition and the model's parameter values. The model definition outlines the model's structure, while the parameter values (weights) provide the numerical values for its units.
+:::
+
+During development, our model runs in a controlled environment. For deployment, it can be moved to a staging environment for testing or directly to a production environment for use by end users.
+
+The production environment can be as simple as wrapping a predict function in a POST request endpoint using frameworks like Flask or FastAPI. This involves building/installing all dependencies in a container alongside the model and hosting it on a cloud service like AWS or GCP. The exposed endpoint can then be utilized by downstream applications.
+
+In this chapter, we'll discuss two main ways a model generates and serves its predictions to users: online and batch predictions. We will also cover where the computation should be performed: on the device (edge) or in the cloud. The method of serving and computing predictions influences the model's design, required infrastructure, and user experience.
+
+## Machine Learning Deployment Myths
+
+### Myth 1: You only deploy one or two ML models at a time
+
+It's a common misconception, especially among those with an academic background, that organizations deploy only a few machine learning models at a time. Academic problems are often smaller in scale, solving one or few specific set of problems. In reality, companies often deploy hundreds or even thousands of models simultaneously. These models serve various purposes across different domains.
+
+Consider a ride-sharing app like Uber. It needs to solve numerous problems, including ride demand prediction, driver availability, estimated time of arrival, dynamic pricing, fraud detection, customer churn, and more. Given that Uber operates in multiple countries, each with its unique market dynamics, the number of deployed models can be substantial. Managing such a large number of models requires robust infrastructure and careful orchestration to ensure they function correctly and efficiently.
+
+### Myth 2: If we don't do anything, model performance remains the same
+
+Another myth is that once a model is deployed, its performance remains stable over time without intervention. However, models can degrade due to several factors, including changes in data distribution shifts (data drift), evolving user behavior, and changes in the external environment. Regular monitoring, retraining, and updating of models are essential to maintain their performance and relevance.
+
+### Myth 3: You don't need to update your models as much
+
+Some believe that models, once deployed, need minimal updates. On the contrary, models often require frequent updates to adapt to new data and changing conditions. Continuous integration and continuous deployment (CI/CD) practices for ML models (referred to as MLOps) are critical to ensure models are consistently retrained, validated, and redeployed to maintain optimal performance. More on the frequency of retraining in Chapter 9. 
+
+### Myth 4: Most ML engineers don't need to worry about scale
+
+It's a misconception that scaling concerns are only relevant for a few ML engineers. In reality, most ML applications need to handle significant scale, whether it's the volume of data, the number of predictions made per second, or the complexity of the models. Engineers need to design and deploy models that can scale efficiently, manage large datasets, and serve predictions in real-time to meet business requirements.
+
+## Batch Prediction versus Online Prediction
