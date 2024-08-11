@@ -1,0 +1,75 @@
+.toggle-button {
+    background-color: #1f77b4;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin: 0 auto; /* Center the button */
+    text-align: center;
+}
+
+.toggle-button:hover {
+    background-color: #1c669b;
+}
+
+[data-theme='dark'] .toggle-button {
+    background-color: #007BFF;
+}
+
+
+[data-theme='dark'] .toggle-button:hover {
+    background-color: #0056b3;
+}
+
+.toggle-button .arrow {
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+}
+
+.toggle-button .arrow.up {
+    transform: rotate(-135deg); /* Rotate to point up */
+}
+
+.toggle-button .arrow.down {
+    transform: rotate(45deg); /* Rotate to point down */
+}
+
+.math-container {
+    display: flex;
+    justify-content: center;
+    gap: 5%;
+    margin-top: 10px;
+    transition: all 1s ease;
+}
+
+.math-container.collapsed {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 1s ease, opacity 1s ease;
+}
+
+.math-container.expanded {
+    max-height: 500px; /* Large enough to show content */
+    opacity: 1;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    transition: all 1s ease;
+}
+
