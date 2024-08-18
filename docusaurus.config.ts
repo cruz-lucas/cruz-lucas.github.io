@@ -87,8 +87,8 @@ const config: Config = {
       title: 'Lucas Cruz',
       logo: {
         alt: 'Site Logo',
-        src: 'img/profile.png',
-        srcDark: 'img/profile.png',
+        src: 'img/favicon/favicon-32x32.png',
+        srcDark: 'img/favicon/dark-favicon-32x32.png',
         target: '_self',
         width: 32,
         height: 32,
@@ -97,9 +97,9 @@ const config: Config = {
       items: [
         {
           type: 'dropdown',
-          label: 'Learning',
+          label: 'Wiki',
           position: 'left',
-          to: 'learning',
+          to: 'wiki',
           items: [
             {
               type: 'docSidebar',

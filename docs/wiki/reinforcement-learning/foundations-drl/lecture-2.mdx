@@ -1,27 +1,46 @@
 ---
 title: 2. Deep Q-Learning
 sidebar_position: 2
-slug: /drl/lecture-2
+slug: /drl-2
 ---
 
 # Q-Learning
 
-:::warning Work in Progress
-These are my rough notes.
-:::
+In the previous post, we laid the groundwork by exploring Markov Decision Processes (MDPs) and exact solution methods like value iteration and policy iteration. In this post, we'll build on those concepts to delve into deep Q-learning, an essential component of deep reinforcement learning.
 
-# Recap
+# Recap of the Previous Post
 
-Optimal Planning/Control
+In the first post, we covered the basics of optimal planning or control within an MDP framework. An MDP consists of a set of states, actions, a probabilistic transition model, a reward function, a discount factor $\gamma$, and a horizon $H$. The objective is to find the optimal policy $\pi^*$ that maximizes expected rewards over time.
 
-Given an $MDP(S,A,P,R,\gamma,H)$ find the optimal policy $\pi^*$
+We introduced two exact methods to achieve this:
+- **Value Iteration:** Iteratively updates the value of each state until convergence.
+- **Policy Iteration:** Alternates between evaluating a policy and improving it until the optimal policy is found.
 
-| Limitations | How to address |
-| --- | --- |
-| Requires access to dynamics model | Sample-based approximations |
-| Requires iteration over all states and actions | $Q$/$V$ function fitting (and policy as well in the following lectures) |
+These methods are powerful but come with limitations:
 
-## Q-Values
+1. Both methods require knowledge of the environment's dynamics, i.e., the probability of transitioning to the next state given the current state and action. However, in many real-world scenarios, the agent doesn't have access to this information and must learn from interaction with the environment.
+
+2. These methods involve looping over all possible states and actions. For complex environments, the number of states and actions can be enormous, making such exhaustive loops impractical.
+
+Given these limitations, the focus of the remaining posts, including this one, will shift to more scalable approaches. Specifically, we'll explore how to approximate solutions using **sampling-based methods** and **function fitting** instead of relying on tabular methods.
+
+**Sampling-Based Approximations:**
+- The agent collects experiences by interacting with the environment and uses these experiences to approximate the optimal policy.
+- This approach circumvents the need for a complete dynamics model by relying on observed transitions.
+
+**Function Fitting:**
+- Instead of storing values or actions for every possible state in a table, we use a function, often represented by a neural network, to approximate these values or actions.
+- This function can generalize across states, making it feasible to handle large or continuous state spaces.
+
+{/* 
+#### Outline of This Lecture
+
+In this lecture, we'll focus on Q-learning, starting with its basics in a tabular setting to build intuition. This will introduce the idea of sampling-based methods. We'll then transition to **function fitting**, where we'll briefly refresh our understanding of neural networks and deep learning. Finally, we'll see how these concepts are integrated into Q-learning, leading to **Deep Q-Networks (DQNs)**—the approach that powered DeepMind's 2013 breakthrough in reinforcement learning for Atari games.
+
+By the end of this lecture, you'll have a solid understanding of how Q-learning works, both in simple settings and when extended to deep learning, enabling you to tackle large-scale, real-world problems in reinforcement learning. */}
+
+
+## Tabular Q-Learning
 
 $Q^*(s,a) =$ expected utility starting in $s$, taking action $a$, and acting optimally.
 

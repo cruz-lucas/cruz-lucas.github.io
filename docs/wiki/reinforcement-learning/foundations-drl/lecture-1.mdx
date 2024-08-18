@@ -1,7 +1,7 @@
 ---
 title: 1. Foundations of RL
 sidebar_position: 1
-slug: /drl/lecture-1
+slug: /drl-1
 ---
 import TimelineComponent from '@site/src/components/RL/Motivation'; 
 import Flow from '@site/src/components/RL/Mdp'; 
@@ -10,7 +10,7 @@ import {EntropyGraph, InteractiveGraph} from '@site/src/components/RL/Graphs';
 
 # Foundations of Reinforcement Learning
 
-This first lecture covers **Markov Decision Processes (MDPs), exact solution methods and maximum entropy formulation**. We'll define the main components of MDPs—states, actions, transition probabilities, and rewards—and look at exact solution methods like dynamic programming. While these methods work well for small-scale problems, they don't scale effectively to larger ones, pointing to the need for advanced techniques that we'll discuss in later lectures.
+This first post covers **Markov Decision Processes (MDPs), exact solution methods and maximum entropy formulation**. We'll define the main components of MDPs—states, actions, transition probabilities, and rewards—and look at exact solution methods like dynamic programming. While these methods work well for small-scale problems, they don't scale effectively to larger ones, pointing to the need for advanced techniques that we'll discuss in later posts.
 
 ## Motivation
 
@@ -224,7 +224,7 @@ $$
 
 #### Q-Value Iteration
 
-Having explored the concept of value iteration for states, we now turn to another important concept in reinforcement learning: Q-values. This will be a foundation of many advanced algorithms we'll explore in the next lectures.
+Having explored the concept of value iteration for states, we now turn to another important concept in reinforcement learning: Q-values. This will be a foundation of many advanced algorithms we'll explore in the next posts.
 
 A Q-value, $Q^*(s, a)$, represents the expected discounted sum of rewards starting from state $s$, taking action $a$, and thereafter acting optimally. Essentially, it's similar to a value function, but it considers the value of committing to a specific action in a given state.
 
@@ -325,7 +325,7 @@ Once policy iteration converges, the resulting policy is optimal. Here's the int
 
 ## Maximum Entropy Formulation
 
-So far, we've covered two fundamental methods for solving Markov Decision Processes (MDPs): value iteration and policy iteration. These methods serve as the foundation for many of the algorithms we'll explore in future lectures, particularly those designed to tackle larger-scale problems. However, it's important to introduce another formulation for solving or framing MDPs: **the maximum entropy formulation**.
+So far, we've covered two fundamental methods for solving Markov Decision Processes (MDPs): value iteration and policy iteration. These methods serve as the foundation for many of the algorithms we'll explore in future posts, particularly those designed to tackle larger-scale problems. However, it's important to introduce another formulation for solving or framing MDPs: **the maximum entropy formulation**.
 
 
 <details>
@@ -500,7 +500,7 @@ $$
 
 
 <details>
-<summary>Policy Deviration</summary>
+<summary>Policy Derivation</summary>
 $$
 \begin{align*}
 \max_{\pi(a)} \quad& \mathbb{E}[r(a) + \beta \mathcal{H}(\pi(a))] \\
@@ -606,13 +606,13 @@ Here:
 - pi_k(a|s)$ is resulting policy from this value iteration process is also a Softmax distribution over the Q-values.
 - The Softmax operation is applied to the Q-values, where the sharpness of the Softmax is controlled by the temperature parameter $\beta$.
 
-## Recap of Lecture 1
+## Recap
 
-In this first lecture, we covered several foundational topics:
+In this first post, we covered several foundational topics:
 - **Motivation:** We explored why Deep Reinforcement Learning (RL) is an exciting and impactful area of study.
 - **Markov Decision Processes (MDPs):** We introduced MDPs as the formal framework underlying RL methods.
 - **Exact Solution Methods:** We delved into two exact solution methods for traditional MDPs: value iteration and policy iteration.
 - **Maximum Entropy Formulation:** We introduced the Max-Ent formulation, which modifies traditional value iteration and policy iteration by incorporating entropy, leading to stochastic policies.
 
 
-The methods we've discussed so far are well-suited for small MDPs where it's feasible to loop over all states and actions and perform Bellman updates, whether through hard maxes or Softmaxes. However, most practical MDPs involve a vast number of states, making it impractical to iterate over all possible states and actions directly. The subsequent lectures in this series will focus on how to address this challenge, building on the foundations we've already established.
+The methods we've discussed so far are well-suited for small MDPs where it's feasible to loop over all states and actions and perform Bellman updates, whether through hard maxes or Softmaxes. However, most practical MDPs involve a vast number of states, making it impractical to iterate over all possible states and actions directly. The subsequent posts in this series will focus on how to address this challenge, building on the foundations we've already established.
