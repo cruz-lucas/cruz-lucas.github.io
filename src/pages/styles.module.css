@@ -28,15 +28,18 @@
 
 .heroTextContainer {
   margin: 0 auto;
-  max-width: var(--ifm-container-width);
+  max-width: 100%; /* Ensure it doesn't exceed the screen width */
   min-width: fit-content;
-  padding: 0 var(--ifm-spacing-horizontal);
+  padding: 0 15px; /* Reduce padding to avoid overflow */
 }
 
 .heroTextArea {
   color: white;
+  max-width: 100%; /* Ensure it doesn’t exceed the screen width */
   margin-bottom: 30px;
 }
+
+  
 
 .heroTextTitle {
   font-size: 1.5rem;
@@ -239,16 +242,13 @@
 }
 
 .avatarArea > img {
-  width: 200px;
-  height: 200px;
+  width: 100%; /* Ensure the image scales with the container */
+  max-width: 150px; /* Set a max-width for larger screens */
+  height: auto; /* Keep the aspect ratio */
   margin-bottom: 10px;
-  border-radius: 100%;
+  border-bottom-right-radius: 40%;
   transition: ease 0.3s;
-  -webkit-transition: ease 0.3s;
-  -moz-transition: ease 0.3s;
-  -o-transition: ease 0.3s;
-  -ms-transition: ease 0.3s;
-  object-fit: cover; /* Ensures the image covers the entire area */
+  object-fit: cover;
 }
 
 /* [data-theme="dark"] .avatarArea > img {
@@ -274,10 +274,8 @@
     width: 38%;
   }
   .avatarArea > img {
-    width: 100px;
-    height: 100px;
+    max-width: 100px;
     margin-bottom: 10px;
-    border-radius: 100%;
     transition: ease 0.3s;
     -webkit-transition: ease 0.3s;
     -moz-transition: ease 0.3s;
@@ -297,11 +295,11 @@
   
   .heroTextArea {
     /* background: rgba(0, 0, 0, 0.5); */
-    padding: 20px;
+    /* padding: 20px;
     border-radius: 1rem;
     letter-spacing: 0;
-    white-space: nowrap;
-    margin-bottom: 0;
+    white-space: nowrap; */
+    margin-bottom: 15px;
   }
 
   .heroTextTitle::selection {
@@ -396,4 +394,44 @@
   .portfolioListWrapper {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+
+.aboutMeCard {
+  background: rgba(255, 255, 255, 0.85);
+  padding: 20px;
+  border-radius: 15px;
+  width: 100%; /* Make it take the full width available */
+  max-width: 600px; /* Keep a max-width for larger screens */
+  margin: 0 auto 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: black;
+  overflow-wrap: break-word;
+}
+
+@media screen and (max-width: 576px) {
+  .aboutMeCard {
+    width: 100%; /* Ensure it takes up the full screen width on mobile */
+    padding: 15px; /* Reduce padding on smaller screens */
+  }
+}
+
+
+
+[data-theme="dark"] .aboutMeCard {
+  background: rgba(37, 37, 38, 0.85); /* Black with 85% opacity */
+  color: white;
+}
+
+.aboutMeText {
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: left;
+  word-wrap: break-word;
+  hyphens: auto;
+  word-break: break-word; /* Prevent long links or words from overflowing */
+}
+
+a {
+  word-break: break-word; /* Apply to links as well */
 }

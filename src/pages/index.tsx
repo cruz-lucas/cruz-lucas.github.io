@@ -38,33 +38,49 @@ function HomepageHeader({ isMobileDevice }: HomepageHeaderProps): JSX.Element {
     <header className={clsx(styles.heroBanner)}>
       <div className={styles.heroBannerBackground}></div>
       <div className={clsx(styles.heroTextContainer)}>
-        <div className={styles.avatarArea}>
+
+        <div className={styles.heroTextArea}>
+
+          {/* About Me Card */}
+          <div className={styles.aboutMeCard}>
+            <div className={styles.avatarArea}>
             <Link
               className={clsx(styles.avatarArea)}
               to="/about"
             ><img
-              src={profile}
-              alt="Lucas"
+                src={profile}
+                alt="Lucas"
               />
             </Link>
-              
-        </div>
-        <div className={styles.heroTextArea}>
-          <div className={styles.heroTextAreaButton}>
-            <Link
-              className={clsx(
-                'button',
-                'button--secondary',
-                'button--sm',
-                styles.heroTextAreaButton
-              )}
-              to="/learning"
-            >
-              {"Go to Learning"}
-            </Link>
+
           </div>
+
+            <p className={styles.aboutMeText}>
+              Hi, I'm <strong>Lucas</strong>, an electronics engineer, roboticist, classical guitarist, and autistic individual. <br /><br />
+              I'm a <strong>senior Machine Learning Engineer at <a href='https://www.hurb.com/?pos=zz'>Hurb</a></strong>, a Brazilian travel company. I lead the experimentation program, developing a culture of experimentation within the company. <br /><br />
+              Starting this fall, I will be a <strong>master's student at the <a href="https://www.ualberta.ca/en/index.html">University of Alberta</a></strong>, where I will focus my research on reinforcement learning.
+            </p>
+
+
+            {/* Go to Learning Button */}
+            <div className={styles.heroTextAreaButton}>
+              <Link
+                className={clsx(
+                  'button',
+                  'button--secondary',
+                  'button--sm',
+                  styles.heroTextAreaButton
+                )}
+                to="/wiki"
+              >
+                {"Go to Wiki"}
+              </Link>
+            </div>
+            <ContactMeBtn />
+          </div>
+
         </div>
-       <ContactMeBtn/>
+
       </div>
     </header>
   )

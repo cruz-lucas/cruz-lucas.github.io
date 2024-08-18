@@ -83,7 +83,7 @@ const AnimationGrid: React.FC = () => {
                     return newGridValues;
                 });
                 setStep(prevStep => prevStep + 1);
-            }, 100);
+            }, 300);
         }
 
         return () => {
@@ -94,8 +94,14 @@ const AnimationGrid: React.FC = () => {
     }, [isPlaying, step, gamma, H, noise]);
 
     const handlePlay = () => {
+        if (step >= H) {
+            // Reset the grid and step if the end has been reached
+            setGridValues(initialGrid.map(row => row.map((cell) => initialRewards[cell])));
+            setStep(0);
+        }
         setIsPlaying(true);
     };
+    
 
     const handlePause = () => {
         setIsPlaying(false);
