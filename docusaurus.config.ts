@@ -191,10 +191,10 @@ const config: Config = {
               label: '(Not that) Basic Statistical Concepts',
               to: '/statistics',
             },
-            {
-              label: 'A Practical Guide to A/B Testing',
-              to: '/experimentation',
-            },
+            // {
+            //   label: 'A Practical Guide to A/B Testing',
+            //   to: '/experimentation',
+            // },
           ],
         },
         {
