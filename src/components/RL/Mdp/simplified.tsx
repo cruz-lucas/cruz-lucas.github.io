@@ -13,14 +13,13 @@ import { isMobile } from '@site/src/utils'
 import './Mdp.css';
 
 const initialNodes: Node[] = [
-  { className: "agent", id: '1', data: { label: 'Agent' }, position: { x: 0, y: 0 }, sourcePosition: Position.Right, targetPosition: Position.Left },
-  { className: "env", id: '2', data: { label: 'Environment' }, position: { x: 0, y: 100 }, sourcePosition: Position.Left, targetPosition: Position.Right },
+  { className: "agent", id: '1', data: { label: 'Agent' }, position: { x: 5, y: 5 }, sourcePosition: Position.Right, targetPosition: Position.Left},
+  { className: "env", id: '2', data: { label: 'Environment' }, position: { x: 5, y: 100 }, sourcePosition: Position.Left, targetPosition: Position.Right},
 ];
 
 const initialEdges: Edge[] = [
-  { id: 'action', source: '1', target: '2', label: 'Actionₜ', type: 'smoothstep', pathOptions: { offset: 40 } },
-  { id: 'state', source: '2', target: '1', label: 'Stateₜ', type: 'smoothstep', pathOptions: { offset: 90 } },
-  { id: 'reward', source: '2', target: '1', label: 'Rewardₜ₊₁', type: 'smoothstep', pathOptions: { offset: 40 } }
+  { id: 'action', source: '1', target: '2', label: 'Interaction', type: 'smoothstep', pathOptions: { offset: 40 }  },
+  { id: 'state', source: '2', target: '1', label: 'Feedback', type: 'smoothstep', pathOptions: { offset: 40 } },
 ];
 
 const defaultEdgeOptions: DefaultEdgeOptions = {

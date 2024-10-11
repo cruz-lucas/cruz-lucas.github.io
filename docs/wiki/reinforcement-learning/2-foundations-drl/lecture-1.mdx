@@ -76,9 +76,9 @@ In our grid world, the agent in this world can move in four directions, if it tr
 
 ## Exact Solution Methods
 
-### Value Iteration
+Exact solution methods in reinforcement learning aim to find the optimal policy for Markov Decision Processes (MDPs) by explicitly solving the Bellman equations through iterative algorithms. These methods, including **value iteration** and **policy iteration**, systematically evaluate and improve policies to achieve the highest expected reward. Although they provide precise solutions, their computational requirements make them impractical for large-scale problems due to the need to iterate over all possible states and actions.
 
-#### Optimal Value Function $V^*$
+### Value Iteration
 
 The core concept of value iteration revolves around the optimal value function $V^*(s)$. This function represents the maximum expected discounted sum of rewards that can be achieved from state $s$ by following the optimal policy. Essentially, it quantifies the best possible outcome starting from any given state.
 
@@ -248,7 +248,7 @@ $$
 
 ### Policy Iteration
 
-After covering value iteration, both based on state values (V-values) and action values (Q-values), we turn to another method in reinforcement learning: policy iteration. While value iteration is effective for solving small MDPs by looping through all states and actions, policy iteration offers an alternative approach that is particularly useful in different situations. Some advanced methods we'll explore later will be built on value iteration, while others will rely on policy iteration. Understanding both methods provides a solid foundation for tackling various types of problems.
+After covering value iteration, both based on state values (V-values) and state-action values (Q-values), we turn to another method in reinforcement learning: policy iteration. While value iteration is effective for solving small MDPs by looping through all states and actions, policy iteration offers an alternative approach that is particularly useful in different situations. Some advanced methods we'll explore later will be built on value iteration, while others will rely on policy iteration. Understanding both methods provides a solid foundation for tackling various types of problems.
 
 #### Policy Evaluation
 
@@ -611,7 +611,7 @@ Here:
 In this first post, we covered several foundational topics:
 - **Motivation:** We explored why Deep Reinforcement Learning (RL) is an exciting and impactful area of study.
 - **Markov Decision Processes (MDPs):** We introduced MDPs as the formal framework underlying RL methods.
-- **Exact Solution Methods:** We delved into two exact solution methods for traditional MDPs: value iteration and policy iteration.
+- **Exact Solution Methods:** We saw two exact solution methods for traditional MDPs: value iteration and policy iteration.
 - **Maximum Entropy Formulation:** We introduced the Max-Ent formulation, which modifies traditional value iteration and policy iteration by incorporating entropy, leading to stochastic policies.
 
 

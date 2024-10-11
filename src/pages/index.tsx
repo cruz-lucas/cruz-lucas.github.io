@@ -57,8 +57,8 @@ function HomepageHeader({ isMobileDevice }: HomepageHeaderProps): JSX.Element {
 
             <p className={styles.aboutMeText}>
               Hi, I'm <strong>Lucas</strong>, an electronics engineer, roboticist, classical guitarist, and autistic individual. <br /><br />
-              I'm a <strong>senior Machine Learning Engineer at <a href='https://www.hurb.com/?pos=zz'>Hurb</a></strong>, a Brazilian travel company. I lead the experimentation program, developing a culture of experimentation within the company. <br /><br />
-              Starting this fall, I will be a <strong>master's student at the <a href="https://www.ualberta.ca/en/index.html">University of Alberta</a></strong>, where I will focus my research on reinforcement learning.
+              I'm also a <strong>master's student at the <a href="https://www.ualberta.ca/en/index.html">University of Alberta</a></strong>, where I focus my research on <strong>reinforcement learning</strong>. <br /><br />
+              This is my personal notebook and second brain. Here, you'll find my thoughts on various topics, from reinforcement and machine learning to statistics and beyond.
             </p>
 
 

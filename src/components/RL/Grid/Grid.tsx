@@ -1,5 +1,5 @@
 import React from 'react';
-import './style.css';
+import './Grid.css';
 
 type GridProps = {
     gridValues?: number[][];

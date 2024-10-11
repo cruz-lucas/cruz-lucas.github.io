@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Grid from './Grid';
-import './style.css';
+import './Grid.css';
 
 type Position = {
     row: number;

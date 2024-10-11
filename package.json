@@ -37,6 +37,7 @@
     "react-latex-next": "^3.0.0",
     "react-plotly.js": "^2.6.0",
     "reactflow": "^11.11.4",
+    "reactjs-flip-card": "^2.0.3",
     "rehype-katex": "7",
     "remark-math": "6",
     "rsuite": "^5.67.0",
