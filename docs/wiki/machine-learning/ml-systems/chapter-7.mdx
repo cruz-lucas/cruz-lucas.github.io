@@ -40,3 +40,54 @@ Some believe that models, once deployed, need minimal updates. On the contrary, 
 It's a misconception that scaling concerns are only relevant for a few ML engineers. In reality, most ML applications need to handle significant scale, whether it's the volume of data, the number of predictions made per second, or the complexity of the models. Engineers need to design and deploy models that can scale efficiently, manage large datasets, and serve predictions in real-time to meet business requirements.
 
 ## Batch Prediction versus Online Prediction
+
+When deploying machine learning models, one fundamental decision you have to make involves choosing the mode of prediction. Each method serves different use cases and has its own advantages and trade-offs:
+
+- Batch prediction, which uses only batch features.
+- Online prediction that uses only batch features (e.g., precomputed embeddings).
+- Online prediction that uses both batch features and streaming features. This is also known as streaming prediction.
+
+### Batch Prediction
+{/* 
+**Batch prediction** refers to the process of generating predictions for a large set of data all at once, typically at scheduled intervals (e.g., daily, weekly) or when triggered. This approach is commonly used when predictions do not need to be generated in real-time but are still required for large volumes of data. Batch predictions is also known as _asynchronous prediction_.
+
+**Key Characteristics:**
+- **Efficiency:** Batch prediction is efficient for processing large volumes of data, as it allows for optimized use of resources. By processing data in bulk, it reduces the overhead associated with making individual predictions.
+- **Use Cases:** It is well-suited for use cases such as generating product recommendations overnight for an e-commerce site, forecasting sales for the upcoming month, or scoring credit risk profiles for all customers at the end of each day.
+- **Latency:** Batch prediction has higher latency since predictions are not generated instantly but are instead delivered after processing is complete. This is acceptable for tasks where real-time predictions are not required.
+- **Infrastructure:** Requires a system capable of handling large datasets and often involves a pipeline to preprocess data, run predictions, and store the results in a database or data warehouse for further use.
+
+**Advantages:**
+- **Resource Optimization:** Can be scheduled during off-peak hours to take advantage of available computing resources.
+- **Simplicity:** Easier to implement, as it doesn’t require the real-time infrastructure necessary for online predictions.
+
+**Challenges:**
+- **Delayed Predictions:** Not suitable for applications that require immediate results.
+- **Data Freshness:** Predictions might be based on outdated data if the batch job runs infrequently.
+
+### Online Prediction
+
+**Online prediction**, also known as real-time prediction, involves generating predictions on-the-fly as data is received. This method is critical for applications where immediate feedback or decision-making is necessary.
+
+**Key Characteristics:**
+- **Real-Time Response:** Online prediction provides immediate predictions as new data arrives, enabling real-time decision-making.
+- **Use Cases:** Common in scenarios like fraud detection during a financial transaction, providing personalized content on a website, or estimating the time of arrival in a ride-sharing app.
+- **Low Latency:** Requires very low latency, often measured in milliseconds, to ensure a seamless user experience.
+- **Infrastructure:** Demands a robust, scalable infrastructure capable of handling potentially high volumes of requests in real-time without significant delays. This often includes the use of APIs, microservices, and caching mechanisms to speed up responses.
+
+**Advantages:**
+- **Immediate Feedback:** Ideal for scenarios where timely predictions are critical to the user experience or business outcomes.
+- **Dynamic Adaptability:** Allows models to make predictions based on the most current data, improving the relevance and accuracy of predictions.
+
+**Challenges:**
+- **Complexity:** More challenging to implement and maintain due to the need for real-time data processing and robust infrastructure.
+- **Resource Intensive:** Requires continuous availability of computing resources, which can be costly.
+
+### Choosing Between Batch and Online Prediction
+
+The choice between batch and online prediction depends largely on the specific requirements of the use case:
+
+- **Batch prediction** is ideal when you can afford to process data at regular intervals and where predictions do not need to be immediate. It is also more cost-effective for handling large datasets in a controlled, predictable manner.
+- **Online prediction** is necessary when real-time responses are critical, such as in applications where user interactions or transactions depend on instant feedback. It provides the most up-to-date predictions but at a higher operational cost and complexity.
+
+In some cases, a hybrid approach might be used, where batch predictions are generated periodically, and online predictions are used to refine or update those predictions in real-time based on new data. This combination leverages the strengths of both approaches to meet the needs of complex, dynamic systems. */}

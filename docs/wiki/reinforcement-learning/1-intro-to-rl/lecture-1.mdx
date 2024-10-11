@@ -1,0 +1,139 @@
+---
+title: 1. Introduction to Reinforcement Learning
+sidebar_position: 1
+slug: /rl-intro-1
+---
+import Flow from '@site/src/components/RL/Mdp/simplified'; 
+import Bandit from '@site/src/components/RL/Bandit'; 
+
+# Introduction to Reinforcement Learning
+
+:::info
+In this chapter you'll be introduced to:
+- **K-armed bandit problem:** A simplified reinforcement learning (RL) scenario used to explain more complex concepts.
+- **Action-value estimation:** Methods for estimating the value of actions to make informed decisions.
+- **Exploration-exploitation trade-off:** The dilemma between choosing the best-known action and exploring new actions that might yield higher rewards.
+:::
+
+Reinforcement Learning is a field that has grown remarkably over the past few decades. Initially, RL was limited to a few research labs and had few practical applications. Today, it's at the forefront of AI research and is used in various industries, from gaming to robotics.
+
+The core idea of RL is that an agent can learn how the world works by interacting with it, much like how humans and animals learn through trial and error. This approach allows agents to adapt to changing environments and goals, making RL a powerful tool for solving complex problems.
+
+## Sequential Decision Making with Evaluative Feedback
+
+In RL, agents learn by interacting with an environment and receiving feedback in the form of rewards. Unlike supervised learning, where agents are given labeled examples, RL agents must discover the optimal actions through trial and error.
+
+<Flow/>
+
+### The k-Armed Bandit Problem
+
+A classic example to illustrate decision-making under uncertainty is the **k-armed bandit problem**. Imagine a slot machine (or "one-armed bandit") with multiple levers (arms). Each lever provides a reward drawn from a probability distribution unique to that lever. The goal is to maximize the total reward over time by choosing which lever to pull.
+
+<Bandit method="" showEstimatedValues={false} />
+
+The key components are:
+
+- **Actions ($A_t$):** The levers to pull.
+- **Rewards ($R_t$):** The payoff received after taking an action at time $t$.
+- **Action Value ($q_*(a)$):** The expected reward of taking action $a$.
+
+The action value is defined as:
+
+$$
+q_*(a) = \mathbb{E}[R_t | A_t = a]
+$$
+
+
+## Estimating Action Values
+
+To maximize rewards, the agent needs to estimate the value of each action. Since the true action values ($q_*(a)$) are unknown, the agent must learn them from experience.
+
+### Sample-Average Method
+
+One simple method to estimate action values is the **sample-average method**, where the estimated value $\hat{Q}_n(a)$ is the average of rewards received when action $a$ was taken $n$ times:
+
+$$
+\hat{Q}_n(a) = \frac{\sum_{i=1}^{n} R_i}{n}
+$$
+
+<Bandit method="sampleAverage"/>
+
+### Incremental Implementation
+
+Storing all past rewards can be impractical. Instead, we can update the estimates incrementally:
+
+$$
+\hat{Q}_{n+1} = \hat{Q}_n + \frac{1}{n} (R_n - \hat{Q}_n)
+$$
+
+This update rule adjusts the estimate based on the error between the received reward and the current estimate. The incremental update can be generalized using a step size $\alpha$:
+
+$$
+\hat{Q}_{n+1} = \hat{Q}_n + \alpha (R_n - \hat{Q}_n)
+$$
+
+Using a constant step size (e.g., $\alpha = 0.1$) is beneficial in **non-stationary problems**, where the reward distributions change over time, giving more weight to recent rewards.
+
+The general rule follows a recurrent pattern in RL:
+
+$$
+\text{NewEstimate} \leftarrow \text{OldEstimate} + \text{StepSize} [\text{Target} - \text{OldEstimate}]
+$$
+
+<Bandit method="incremental"/>
+
+## Exploration vs. Exploitation Trade-off
+
+A fundamental challenge in RL is balancing **exploration** (trying new actions to gain more information) and **exploitation** (choosing the best-known action to maximize reward). If an agent always exploits, it may miss out on actions that could yield higher rewards because it never tries them. On the other hand, if it always explores, it may forgo the opportunity to accumulate higher rewards from known good actions. The dilemma arises because the agent cannot simultaneously explore and exploit; it must choose between gathering more information or leveraging existing knowledge to maximize immediate reward.
+
+### Epsilon-Greedy
+
+One simple strategy is the **epsilon-greedy** method:
+
+- With probability $\epsilon$, **explore** by choosing an action at random.
+- With probability $1 - \epsilon$, **exploit** by choosing the best action.
+
+To choose the best action, called **greedy action**, we choose the action with the highest estimated value:
+
+$$
+A_t \doteq \underset{a}{\operatorname{argmax}} \hat{Q}_t(a)
+$$
+
+### Optimistic Initial Values
+
+Another approach to encourage exploration is to use **optimistic initial values**. By initializing action-value estimates to high values, the agent is driven to explore actions to correct these overestimations. But this approach comes with limitations:
+
+- It encourages exploration mainly in the beginning.
+- It may not adapt well if action values change over time.
+- It is sensible and requires knowledge of the reward range.
+
+### Upper-Confidence Bound (UCB) Action Selection
+
+The **UCB** method selects actions based on both the estimated value and the uncertainty in that estimate:
+
+$$
+A_t \doteq \underset{a}{\operatorname{argmax}} \left[ \hat{Q}_t(a) + c \sqrt{\frac{\ln t}{N_t(a)}} \right]
+$$
+
+Where:
+- $c$ is a parameter controlling the degree of exploration.
+- $N_t(a)$ is the number of times action $a$ has been selected.
+- Actions with higher uncertainty (less explored) get a higher bonus.
+
+The advantages compared to epsilon-greedy include:
+
+- The focus on actions with higher uncertainty.
+- It naturally reduces exploration over time as uncertainty decreases.
+
+## Recap
+
+In this introductory post, we've covered:
+
+- **Foundations of RL:** Understanding how agents learn from interaction with the environment.
+- **k-Armed Bandit Problem:** A simplified setting to study decision-making under uncertainty.
+- **Action-Value Estimation:** Methods to estimate the value of actions, including incremental updates.
+- **Exploration vs. Exploitation:** Strategies like epsilon-greedy and UCB to balance learning and reward maximization.
+
+:::warning
+Gradient bandit algorithms and contextual bandits will be included in a future iteration over this chapter.
+:::

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Grid from './Grid';
-import './style.css';
+import './Grid.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const initialGrid = [

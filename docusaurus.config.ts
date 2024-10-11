@@ -119,8 +119,14 @@ const config: Config = {
           ],
         },
         {
+          type: 'docSidebar', 
+          label: 'Research',
+          sidebarId: 'ResearchSidebar',
+          // position: 'left',
+        },
+        {
           to: '/about', 
-          label: 'About Me',
+          label: 'About',
           position: 'right',
         },
         {
@@ -143,7 +149,7 @@ const config: Config = {
           title: 'About',
           items: [
             {
-              label: 'About Me',
+              label: 'About',
               to: '/about'
             },
             // {
@@ -159,6 +165,10 @@ const config: Config = {
         {
           title: 'Reinforcement Learning',
           items: [
+            {
+              label: 'Intro to RL',
+              to: '/rl',
+            },
             {
               label: 'Foundations of Deep RL',
               to: '/drl',
@@ -181,10 +191,10 @@ const config: Config = {
               label: '(Not that) Basic Statistical Concepts',
               to: '/statistics',
             },
-            {
-              label: 'A Practical Guide to A/B Testing',
-              to: '/experimentation',
-            },
+            // {
+            //   label: 'A Practical Guide to A/B Testing',
+            //   to: '/experimentation',
+            // },
           ],
         },
         {

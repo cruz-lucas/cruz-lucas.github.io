@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Latex from 'react-latex-next';
-import './style.css';
+import './Graphs.css';
 import { useColorMode } from '@docusaurus/theme-common';
 
 const InteractiveGraph: React.FC = () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from './Grid';
-import './style.css';
+import './Grid.css';
 
 type StaticGridProps = {
     predefinedValues: number[][];

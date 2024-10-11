@@ -1,0 +1,270 @@
+---
+title: 2. Markov Decision Processes
+sidebar_position: 2
+slug: /rl-intro-2
+---
+import Flow from '@site/src/components/RL/Mdp';
+
+# Markov Decision Processes
+
+:::info
+In this chapter, you'll learn about:
+- **Markov Decision Processes (MDPs):** A mathematical framework for modeling sequential decision-making.
+- **Policies and Value Functions:** How agents decide on actions and evaluate states.
+- **Bellman Equations:** Fundamental recursive relationships in MDPs.
+- **Optimality:** Concepts of optimal policies and value functions.
+:::
+
+In the previous chapter, we explored the k-armed bandit problem, which introduced us to decision-making under uncertainty. However, the bandit problem is limited because it doesn't consider situations where different actions are optimal in different states, nor does it account for the long-term consequences of actions. **Markov Decision Processes (MDPs)** provide a framework to model such sequential decision-making problems where actions influence not only immediate rewards but also future states and rewards.
+
+## Introduction to Markov Decision Processes
+
+In an MDP, the interaction between the **agent** and the **environment** is modeled at discrete time steps:
+
+- **State ($S_t$):** At time $t$, the agent observes the current state from a set of possible states $\mathcal{S}$.
+- **Action ($A_t$):** Based on the state, the agent selects an action from a set of possible actions $\mathcal{A}(S_t)$.
+- **Transition:** The environment responds by transitioning to a new state $S_{t+1}$ and providing a reward $R_{t+1}$.
+
+This process generates a trajectory of experience:
+
+$$
+S_0, A_0, R_1, S_1, A_1, R_2, S_2, \dots
+$$
+
+<Flow />
+
+### Transition Dynamics and the Markov Property
+
+The dynamics of the environment are defined by the **transition probability function** $P$:
+
+$$
+P(s', r | s, a) = \text{Pr}(S_{t+1} = s', R_{t+1} = r \mid S_t = s, A_t = a)
+$$
+
+- **Markov Property:** The future state and reward depend only on the current state and action, not on past states or actions. This property implies that the current state captures all relevant information from the history.
+
+:::tip Example: Recycling Robot
+
+Consider a robot that collects empty soda cans in an office environment.
+
+- **States:** Battery charge level: **High** or **Low**.
+- **Actions:**
+  - **Search:** Look for cans.
+  - **Wait:** Stay stationary and wait for someone to bring a can.
+  - **Recharge:** Go to the charging station (only allowed in **Low** state).
+- **Rewards:**
+  - **Search:** Reward $r_{\text{search}}$, e.g., **+10**.
+  - **Wait:** Reward $r_{\text{wait}}$, e.g., **+1**.
+  - **Recharge:** Reward **0**.
+  - **Rescue Needed:** If the robot runs out of power, negative reward $r_{\text{rescue}}$, e.g., **-20**.
+
+#### Transition Dynamics:
+
+- **From High State:**
+  - **Search:**
+    - Remains in **High** with probability $\alpha$.
+    - Transitions to **Low** with probability $1 - \alpha$.
+  - **Wait:** Remains in **High**.
+- **From Low State:**
+  - **Search:**
+    - Battery depletes (needs rescue) with probability $1 - \beta$.
+      - Transition to **High** (after rescue).
+      - Reward: $r_{\text{rescue}}$ (**negative**).
+    - Remains in **Low** with probability $\beta$.
+      - Reward: $r_{\text{search}}$.
+  - **Recharge:** Transitions to **High**.
+    - Reward: **0**.
+:::
+
+### Returns and Episodes
+
+:::info Goal in RL
+The goal in reinforcement learning is to maximize the **expected cumulative reward**, also known as the **return**.
+:::
+
+
+#### Episodic Tasks
+
+- **Definition:** Tasks that naturally break into episodes, which are sequences that end in a terminal state.
+- **Examples:**
+  - **Games:** Each game is an episode that starts and ends independently of others.
+  - **Navigation Tasks:** Reaching a destination concludes an episode.
+
+In **episodic tasks**, the interaction breaks into episodes ending at time $T$. The return is defined as:
+
+$$
+G_t \doteq R_{t+1} + R_{t+2} + R_{t+3} + \dots + R_T = \sum_{k=0}^{T - t - 1} R_{t + k + 1}
+$$
+
+
+#### Continuing Tasks
+
+- **Definition:** Tasks where the agent-environment interaction continues indefinitely without a terminal state.
+- **Examples:**
+  - **Job Scheduling:** Jobs arrive continuously, and the agent must make decisions at each time step.
+  - **Stock Trading:** The market operates continuously, and trading decisions are made over an indefinite period.
+
+
+In **continuing tasks**, where the interaction goes on indefinitely, we introduce a **discount factor** $\gamma$ ($0 \leq \gamma < 1$) to ensure the cumulative reward is finite:
+
+$$
+G_t \doteq R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}
+$$
+
+- **Effect of $\gamma$:**
+  - **Short-sighted ($\gamma \approx 0$):** Agent focuses on immediate rewards.
+  - **Far-sighted ($\gamma \approx 1$):** Future rewards are weighted more heavily.
+
+:::warning Recursive Property of Return
+The return can be defined recursively:
+
+$$
+G_t = R_{t+1} + \gamma G_{t+1}
+$$
+
+This property is fundamental in deriving many reinforcement learning algorithms.
+:::
+
+
+## Policies and Value Functions
+
+A **policy** defines the agent's behavior at each state. It is a mapping from states to actions.
+
+- **Deterministic Policy ($\pi$):** Maps each state to a specific action.
+
+  $$
+  \pi(s) = a
+  $$
+
+- **Stochastic Policy ($\pi(a|s)$):** Assigns probabilities to each action in a state.
+
+  $$
+  \pi(a|s) = \text{Pr}(A_t = a | S_t = s)
+  $$
+
+**Value functions** estimate how good it is for an agent to be in a given state (or state-action pair), considering future rewards.
+
+- **State-Value Function ($v_\pi(s)$):** Expected return starting from state $s$ and following policy $\pi$.
+
+  $$
+  v_\pi(s) \doteq \mathbb{E}_\pi [G_t | S_t = s] = \mathbb{E}_\pi \bigg[ \sum_{k=0}^\infty \gamma^k R_{t+k+1} \big| S_t = s \bigg], \forall s \in \mathcal{S}
+  $$
+
+- **Action-Value Function ($q_\pi(s, a)$):** Expected return starting from state $s$, taking action $a$, and thereafter following policy $\pi$.
+
+  $$
+  q_\pi(s, a) \doteq \mathbb{E}_\pi [G_t | S_t = s, A_t = a] = \mathbb{E}_\pi \bigg[ \sum_{k=0}^\infty \gamma^k R_{t+k+1} \big| S_t = s, A_t = a \bigg]
+  $$
+
+Value functions are critical because they allow agents to evaluate the desirability of states and actions without waiting for long-term outcomes.
+
+#### Example: Chess
+
+- **State:** Current configuration of the board.
+- **Action:** Legal moves.
+- **Reward:** +1 for winning, 0 otherwise.
+- **State Value ($v_\pi(s)$):** Probability of winning from state $s$ under policy $\pi$.
+
+
+### Bellman Expectation Equation for State-Value Function
+
+The Bellman equation expresses the relationship between the value of a state and the values of its successor states.
+
+$$
+v_\pi(s) = \sum_{a} \pi(a|s) \sum_{s', r} P(s', r | s, a) \left[ r + \gamma v_\pi(s') \right]
+$$
+
+- The value of state $s$ is the expected return from taking action $a$, receiving reward $r$, and transitioning to state $s'$, plus the discounted value of $s'$.
+
+### Bellman Expectation Equation for Action-Value Function
+
+Similarly, for the action-value function:
+
+$$
+q_\pi(s, a) = \sum_{s', r} P(s', r | s, a) \left[ r + \gamma \sum_{a'} \pi(a'|s') q_\pi(s', a') \right]
+$$
+
+
+## Optimality in MDPs
+
+### Optimal Policies
+
+An **optimal policy** $\pi^*$ yields the highest value for all states compared to all other policies.
+
+- **Definition:**
+
+  $$
+  v_{\pi^*}(s) \geq v_\pi(s), \quad \forall s \in \mathcal{S}, \forall \pi
+  $$
+
+- There may be multiple optimal policies that share the same optimal value function.
+
+### Optimal Value Functions
+
+- **Optimal State-Value Function ($v_*(s)$):**
+
+  $$
+  v_*(s) = \max_\pi v_\pi(s)
+  $$
+
+- **Optimal Action-Value Function ($q_*(s, a)$):**
+
+  $$
+  q_*(s, a) = \max_\pi q_\pi(s, a)
+  $$
+
+### Bellman Optimality Equations
+
+These equations define the optimal value functions recursively.
+
+- **For $v_*(s)$:**
+
+  $$
+  v_*(s) = \max_{a} \sum_{s', r} P(s', r | s, a) \left[ r + \gamma v_*(s') \right]
+  $$
+
+- **For $q_*(s, a)$:**
+
+  $$
+  q_*(s, a) = \sum_{s', r} P(s', r | s, a) \left[ r + \gamma \max_{a'} q_*(s', a') \right]
+  $$
+
+### Using Optimal Value Functions to Derive Optimal Policies
+
+Once we have $v_*(s)$ or $q_*(s, a)$, we can derive an optimal policy:
+
+- **From $v_*(s)$:**
+
+  $$
+  \pi^*(s) = \arg\max_{a} \sum_{s', r} P(s', r | s, a) \left[ r + \gamma v_*(s') \right]
+  $$
+
+- **From $q_*(s, a)$:**
+
+  $$
+  \pi^*(s) = \arg\max_{a} q_*(s, a)
+  $$
+
+#### Example: Grid World Optimal Policy
+
+By computing $v_*(s)$ for each state in a grid world, we can determine the optimal action at each state that maximizes the expected return.
+
+
+## Recap
+
+In this chapter, we've expanded our understanding of reinforcement learning by introducing the **Markov Decision Process (MDP)** framework:
+
+- **MDPs capture sequential decision-making** where actions influence future states and rewards.
+- **Components of MDPs:**
+  - **States ($S$):** The situations the agent can be in.
+  - **Actions ($A$):** The choices available to the agent.
+  - **Transition Dynamics ($P$):** Probabilities of moving between states and receiving rewards, encapsulating the environment's dynamics.
+- **The Goal:** Maximize expected cumulative reward (return), considering both immediate and future rewards.
+- **Episodic vs. Continuing Tasks:**
+  - **Episodic Tasks:** Break into episodes with terminal states.
+  - **Continuing Tasks:** Ongoing interaction, often modeled with discounting.
+- **Policies:** Define the agent's behavior by mapping states to actions.
+- **Value Functions:** Quantify the expected return from states or state-action pairs under a policy.
+- **Bellman Equations:** Fundamental recursive relationships that express value functions in terms of expected immediate rewards and future values.
+- **Optimality:** Optimal policies maximize the expected return from every state, and optimal value functions provide the maximum expected return achievable.
+
