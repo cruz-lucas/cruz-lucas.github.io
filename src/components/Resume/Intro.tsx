@@ -1,5 +1,6 @@
 // src/components/Experience.tsx
 import React from 'react';
+import Link from '@docusaurus/Link'
 
 const Intro: React.FC = () => {
   return (
@@ -8,7 +9,7 @@ const Intro: React.FC = () => {
       <div>
         <p>Hi! I'm <strong>Lucas</strong>, an electronics engineer, roboticist, classical guitarist, and autistic individual.</p><br />
 
-        <p>As a <strong>Senior Machine Learning Engineer</strong> at <a href='https://www.hurb.com/'>Hurb</a> for the past three years, I've had the opportunity to:</p>
+        <p>As a <strong>Senior Machine Learning Engineer</strong> at <strong><Link to="https://www.hurb.com/">Hurb</Link></strong> for the past three years, I've had the opportunity to:</p>
 
         <ul>
           <li>
@@ -20,7 +21,7 @@ const Intro: React.FC = () => {
         </ul>
         <br />
 
-        <p>I'm also a <strong>master's student</strong> at the <strong><a href='https://www.ualberta.ca/en/index.html'>University of Alberta</a></strong>, where I focus my research on <strong>reinforcement learning</strong>, specifically trying to merge some methods of model-based Reinforcement Learning to develop better exploration strategies.</p>
+        <p>I'm also a <strong>Master's Student</strong> at the <strong><Link to='https://www.ualberta.ca/en/index.html'>University of Alberta</Link></strong>, where I focus my research on <strong>reinforcement learning</strong>, specifically trying to merge some methods of model-based RL to develop better <strong>exploration</strong> strategies.</p>
       </div>
 
     </section>
