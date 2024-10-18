@@ -45,8 +45,8 @@ const AnimationGrid: React.FC = () => {
     );
     const [step, setStep] = useState<number>(0);
     const [gamma, setGamma] = useState<number>(0.9);
-    const [H, setH] = useState<number>(10);
-    const [noise, setNoise] = useState<number>(0.2);
+    const [H, setH] = useState<number>(5);
+    const [noise, setNoise] = useState<number>(0);
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -132,7 +132,7 @@ const AnimationGrid: React.FC = () => {
                             <input type="number" value={gamma} onChange={(e) => setGamma(parseFloat(e.target.value))} step="0.1" min="0" max="1" />
                         </label>
                         <label>
-                            Steps (H):
+                            Steps:
                             <input type="number" value={H} onChange={(e) => setH(parseInt(e.target.value))} step="1" min="1" />
                         </label>
                         <label>

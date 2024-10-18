@@ -9,7 +9,6 @@ import {contactMeData} from './src/data/constants'
 const config: Config = {
   title: 'Lucas Cruz',
   favicon: 'img/favicon/favicon.ico',
-  
 
   // Set the production url of your site here
   url: 'https://lucas-cruz.com',
@@ -33,6 +32,11 @@ const config: Config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
+
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
 
   presets: [
     [
@@ -169,10 +173,10 @@ const config: Config = {
               label: 'Intro to RL',
               to: '/rl',
             },
-            {
-              label: 'Foundations of Deep RL',
-              to: '/drl',
-            },
+            // {
+            //   label: 'Foundations of Deep RL',
+            //   to: '/drl',
+            // },
           ],
         },
         {
@@ -188,7 +192,7 @@ const config: Config = {
           title: 'Statistics',
           items: [
             {
-              label: '(Not that) Basic Statistical Concepts',
+              label: 'Basic Statistical Concepts',
               to: '/statistics',
             },
             // {
