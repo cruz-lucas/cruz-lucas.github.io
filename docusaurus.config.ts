@@ -122,17 +122,17 @@ const config: Config = {
             },
           ],
         },
-        {
-          type: 'docSidebar', 
-          label: 'Research',
-          sidebarId: 'ResearchSidebar',
-          // position: 'left',
-        },
-        {
-          to: '/about', 
-          label: 'About',
-          position: 'right',
-        },
+        // {
+        //   type: 'docSidebar', 
+        //   label: 'Research',
+        //   sidebarId: 'ResearchSidebar',
+        //   // position: 'left',
+        // },
+        // {
+        //   to: '/about', 
+        //   label: 'About',
+        //   position: 'right',
+        // },
         {
           to: '/cv', 
           label: 'Curriculum Vitae',
@@ -152,10 +152,10 @@ const config: Config = {
         {
           title: 'About',
           items: [
-            {
-              label: 'About',
-              to: '/about'
-            },
+            // {
+            //   label: 'About',
+            //   to: '/about'
+            // },
             // {
             //   label: 'Projects',
             //   to: '/about/projects',
