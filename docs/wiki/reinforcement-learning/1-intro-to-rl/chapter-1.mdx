@@ -1,7 +1,7 @@
 ---
 title: 1. Introduction to Reinforcement Learning
 sidebar_position: 1
-slug: /rl-intro-1
+slug: /rl-intro
 ---
 import Flow from '@site/src/components/RL/Mdp/simplified'; 
 import Bandit from '@site/src/components/RL/Bandit'; 
@@ -10,14 +10,17 @@ import Bandit from '@site/src/components/RL/Bandit';
 
 :::info
 In this chapter you'll be introduced to:
-- **K-armed bandit problem:** A simplified reinforcement learning (RL) scenario used to explain more complex concepts.
+- **Reinforcement Learning (RL)**: Understanding the fundamentals of RL and its significance.
+- **K-armed bandit problem:** A simplified RL scenario used to explain more complex concepts.
 - **Action-value estimation:** Methods for estimating the value of actions to make informed decisions.
 - **Exploration-exploitation trade-off:** The dilemma between choosing the best-known action and exploring new actions that might yield higher rewards.
 :::
 
-Reinforcement Learning is a field that has grown remarkably over the past few decades. Initially, RL was limited to a few research labs and had few practical applications. Today, it's at the forefront of AI research and is used in various industries, from gaming to robotics.
+## What is Reinforcement Learning?
 
-The core idea of RL is that an agent can learn how the world works by interacting with it, much like how humans and animals learn through trial and error. This approach allows agents to adapt to changing environments and goals, making RL a powerful tool for solving complex problems.
+**Reinforcement Learning (RL)** is a type of machine learning where an agent learns to make decisions by performing actions in an environment to achieve some notion of cumulative reward. Unlike supervised learning, where the model is trained on a fixed dataset of labeled examples, RL involves learning through interaction with the environment, receiving feedback in the form of rewards or penalties.
+
+At its core, RL is about an agent learning a policy—a mapping from states of the environment to actions the agent should take—to maximize some notion of cumulative reward over time. This learning process is inspired by behavioral psychology, where actions leading to positive outcomes are reinforced.
 
 ## Sequential Decision Making with Evaluative Feedback
 

@@ -54,8 +54,17 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
-    margin-top: 10px;
+    margin-top: -15px;
     margin-bottom: 10px;
+}
+
+.cell .arrow {
+    font-size: 24px; /* Adjust the size as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #333;
 }
 
 .button-group button {
@@ -93,6 +102,7 @@
     max-width: 500px;
     aspect-ratio: 4 / 3;
     margin: 0 auto;
+    margin-bottom: 20px;
 }
 
 .row {
@@ -117,6 +127,19 @@
     background-repeat: no-repeat;
 }
 
+.goal.with-images {
+    background-image: url('/static/img/learning/rl/grid-world/goal.png');
+}
+
+.penalty.with-images {
+    background-image: url('/static/img/learning/rl/grid-world/penalty.png');
+}
+
+.obstacle.with-images {
+    background-image: url('/static/img/learning/rl/grid-world/obstacle.png');
+}
+
+/* Remove or adjust the .robot class if needed */
 .robot {
     background-image: url('/static/img/learning/rl/grid-world/robot.svg');
     background-size: cover;
