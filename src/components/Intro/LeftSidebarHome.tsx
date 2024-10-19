@@ -6,7 +6,8 @@ import styles from './styles.module.css'
 
 const LeftSidebar: React.FC = () => {
   return (
-    <aside className="left-sidebar">      
+    <aside className="left-sidebar">
+      <div className="sidebar-home">      
       <div className={styles.avatarArea}>
         <img
             src={profile}
@@ -19,6 +20,7 @@ const LeftSidebar: React.FC = () => {
       University of Alberta<br/>
       Edmonton, AB, Canada</p>
       <Contact />
+      </div>
     </aside>
   );
 };
