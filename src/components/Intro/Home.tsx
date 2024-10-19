@@ -1,7 +1,7 @@
 import React from 'react';
-import LeftSidebar from './LeftSidebarHome';
-import MainContent from './MainContentHome';
-import './CV.css'
+import LeftSidebar from '../Intro/LeftSidebarHome';
+import MainContent from '../Intro/MainContentHome';
+import '../Resume/CV.css'
 
 
 const Resume: React.FC = () => {

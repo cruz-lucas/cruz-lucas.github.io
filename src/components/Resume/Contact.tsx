@@ -1,4 +1,3 @@
-// src/components/Extracurricular.tsx
 import React from 'react';
 import ContactMe from "@site/src/components/ContactMeBtn";
 

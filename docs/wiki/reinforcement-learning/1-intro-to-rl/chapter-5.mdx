@@ -76,6 +76,8 @@ Unlike Monte Carlo methods, which require complete episodes to compute returns, 
 
 ## Sarsa: On-policy TD Control
 
+**Sarsa** is an on-policy TD control algorithm that learns the action-value function $Q(s,a)$ for the policy being followed. The name "Sarsa" comes from the sequence $(S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1})$ used in the update.
+
 :::info Sarsa (on-policy TD control)
 $$
 \begin{align*}
@@ -98,8 +100,16 @@ $$
 $$
 :::
 
+#### Characteristics of Sarsa
+
+- **On-Policy:** Learns the value of the policy being followed, including its exploration behavior.
+- **Exploration:** Typically uses $\epsilon$-greedy policies to balance exploration and exploitation.
+- **Convergence:** Converges to an optimal policy if all state-action pairs are visited infinitely often and the policy converges to the greedy policy.
+
 
 ## Q-learning: Off-policy TD Control
+
+**Q-Learning** is an off-policy TD control algorithm that aims to learn the optimal action-value function $Q^*(s,a)$, independent of the agent's policy. It uses the max over actions in the update, allowing it to learn about the optimal policy while following an exploratory policy.
 
 :::info Q-learning (off-policy TD control)
 $$
@@ -121,9 +131,37 @@ $$
 $$
 :::
 
+#### Characteristics of Q-Learning
+- **Off-Policy:** Learns about the optimal policy regardless of the agent's actions.
+- **Exploration Policy:** The agent can follow any exploration policy, as long as it continues to explore.
+- **Convergence:** Converges to the optimal action-value function $Q^*(s,a)$ under certain conditions (e.g., sufficient exploration, decaying learning rate).
+
 ## Expected Sarsa
 
+**Expected Sarsa** is a variation of the Sarsa algorithm that replaces the next action's value in the update with the expected value under the current policy. This can reduce variance and potentially improve learning stability.
+
+The update rule for Expected Sarsa is:
+
+$$
+\begin{align*}
+Q(S_t, A_t) &\leftarrow Q(S_t, A_t) + \alpha \Bigg [ R_{t+1} + \gamma \mathbb{E}_{a} [ Q(S_{t+1}, a) | S_{t+1} ] - Q(S_t, A_t) \Bigg]\\
+&\leftarrow Q(S_t, A_t) + \alpha \left[ R_{t+1} + \gamma \sum_{a} \pi(a|S_{t+1}) Q(S_{t+1}, a) - Q(S_t, A_t) \right]
+\end{align*}
+$$
+
+#### Characteristics of Expected Sarsa
+- **Reduced Variance:** By averaging over all possible actions, Expected Sarsa can have lower variance compared to Sarsa.
+- **Improved Performance:** In some cases, Expected Sarsa can learn faster or achieve better performance than Sarsa.
+- **Computational Cost:** Calculating the expected value requires summing over all possible actions, which can be computationally intensive if the action space is large.
+- **Policy Representation:** The policy must be explicitly known to compute the expected value.
+
 ## Maximization Bias and Double Learning
+
+In Q-Learning, the use of the maximum estimated action value in the update can introduce a positive bias, known as **maximization bias**. This bias occurs because the maximum of estimated values tends to overestimate the true maximum, especially when estimates are noisy.
+
+**Double Learning** is a technique to mitigate maximization bias by decoupling the selection of actions from the evaluation of those actions.
+
+Double Q-Learning uses two separate value functions, $Q_1$ and $Q_2$, which are updated alternately. The key idea is to use one set of estimates to choose the best action and the other to evaluate it.
 
 :::info Double Q-learning (off-policy TD control)
 $$
@@ -150,6 +188,16 @@ $$
 $$
 :::
 
+#### Characteristics of Double Sarsa
+- **Reduced Bias:** By decoupling action selection and evaluation, Double Q-Learning reduces the overestimation bias.
+- **Improved Performance:** Often leads to better performance in environments where maximization bias affects learning.
+
 ## Recap
 
 In this chapter, we've covered:
+
+- **Temporal-Difference Learning:** A method that combines ideas from Monte Carlo and Dynamic Programming.
+- **On-Policy TD Control (Sarsa):** An algorithm that learns the action-value function while following the policy.
+- **Off-Policy TD Control (Q-Learning):** An algorithm that learns the optimal action-value function independent of the agent's actions.
+- **Expected Sarsa:** An algorithm that reduces variance by using expected values in updates.
+- **Maximization Bias and Double Learning:** Understanding overestimation in Q-Learning and addressing it with Double Q-Learning.
