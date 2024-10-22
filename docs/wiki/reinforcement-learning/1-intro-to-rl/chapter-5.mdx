@@ -100,12 +100,11 @@ $$
 $$
 :::
 
-#### Characteristics of Sarsa
-
+:::tip Characteristics of Sarsa
 - **On-Policy:** Learns the value of the policy being followed, including its exploration behavior.
 - **Exploration:** Typically uses $\epsilon$-greedy policies to balance exploration and exploitation.
 - **Convergence:** Converges to an optimal policy if all state-action pairs are visited infinitely often and the policy converges to the greedy policy.
-
+:::
 
 ## Q-learning: Off-policy TD Control
 
@@ -131,10 +130,11 @@ $$
 $$
 :::
 
-#### Characteristics of Q-Learning
+:::tip Characteristics of Q-Learning
 - **Off-Policy:** Learns about the optimal policy regardless of the agent's actions.
 - **Exploration Policy:** The agent can follow any exploration policy, as long as it continues to explore.
 - **Convergence:** Converges to the optimal action-value function $Q^*(s,a)$ under certain conditions (e.g., sufficient exploration, decaying learning rate).
+:::
 
 ## Expected Sarsa
 
@@ -149,11 +149,12 @@ Q(S_t, A_t) &\leftarrow Q(S_t, A_t) + \alpha \Bigg [ R_{t+1} + \gamma \mathbb{E}
 \end{align*}
 $$
 
-#### Characteristics of Expected Sarsa
+:::tip Characteristics of Expected Sarsa
 - **Reduced Variance:** By averaging over all possible actions, Expected Sarsa can have lower variance compared to Sarsa.
 - **Improved Performance:** In some cases, Expected Sarsa can learn faster or achieve better performance than Sarsa.
 - **Computational Cost:** Calculating the expected value requires summing over all possible actions, which can be computationally intensive if the action space is large.
 - **Policy Representation:** The policy must be explicitly known to compute the expected value.
+:::
 
 ## Maximization Bias and Double Learning
 
@@ -188,9 +189,10 @@ $$
 $$
 :::
 
-#### Characteristics of Double Sarsa
+:::tip Characteristics of Double Sarsa
 - **Reduced Bias:** By decoupling action selection and evaluation, Double Q-Learning reduces the overestimation bias.
 - **Improved Performance:** Often leads to better performance in environments where maximization bias affects learning.
+:::
 
 ## Recap
 

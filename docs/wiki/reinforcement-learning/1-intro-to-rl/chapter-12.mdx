@@ -8,9 +8,209 @@ slug: /rl-intro-pg
 
 :::info
 In this chapter, you'll learn about:
+- **Policy Gradient Methods:** Techniques for learning policies directly by optimizing parameterized functions.
+- **The Objective for Learning Policies:** Defining objectives for policy optimization.
+- **The Policy Gradient Theorem:** A key result for computing policy gradients.
+- **Actor-Critic Methods:** Combining policy gradients with value function approximation.
+- **Policy Parameterizations:** Implementations using softmax policies for discrete actions and Gaussian policies for continuous actions.
+:::
+
+In previous chapters, we've focused on methods that learn **value functions** to derive optimal policies. Algorithms like **Q-Learning** and **Sarsa** estimate action values and then use these estimates to make decisions. In this chapter, we'll explore a different approach: **Policy Gradient Methods**, which directly parameterize and optimize the policy without the need to estimate value functions for action selection.
+
+## Introduction to Policy Gradient Methods
+
+In policy gradient methods, we aim to learn a policy that maps states directly to actions without relying on value functions. Instead of deriving the policy indirectly from estimated value functions, we parameterize the policy itself and adjust its parameters to maximize some objective function, typically the expected return.
+
+For example, consider the **Mountain Car** problem, where an underpowered car must drive up a steep hill. Previously, we used value-based methods with ε-greedy policies derived from estimated action values. However, we can also define a policy that directly maps the car's state (position and velocity) to an action (accelerate left, accelerate right, or do nothing) and adjust the policy parameters to maximize performance.
+
+### Parameterizing Policies
+
+We represent the policy $\pi(a | s, \boldsymbol{\theta})$ using a parameterized function with parameters $\boldsymbol{\theta}$. The policy outputs the probability of taking action $a$ in state $s$. Our goal is to find the parameters $\boldsymbol{\theta}$ that maximize the expected return.
+
+To ensure that $\pi(a | s, \boldsymbol{\theta})$ is a valid probability distribution over actions in each state, it must satisfy:
+
+- $\pi(a | s, \boldsymbol{\theta}) \geq 0$ for all $a \in \mathcal{A}(s)$
+- $\sum_{a \in \mathcal{A}(s)} \pi(a | s, \boldsymbol{\theta}) = 1$
+
+One common way to parameterize policies is using the **softmax function** over action preferences.
+
+#### Softmax Policy
+
+The softmax policy assigns probabilities to actions based on their **preferences** $h(s, a, \boldsymbol{\theta})$:
+
+$$
+\pi(a | s, \boldsymbol{\theta}) = \frac{e^{h(s, a, \boldsymbol{\theta})}}{\sum_{b \in \mathcal{A}(s)} e^{h(s, b, \boldsymbol{\theta})}}
+$$
+
+- The preferences $h(s, a, \boldsymbol{\theta})$ can be any real-valued function parameterized by $\boldsymbol{\theta}$.
+- The exponential function ensures that all probabilities are positive.
+- The denominator normalizes the probabilities so they sum to one.
+
+
+#### Gaussian Policy
+
+For continuous action spaces, we can parameterize the policy as a Gaussian distribution.
+
+The policy outputs mean $\mu(s, \boldsymbol{\theta})$ and standard deviation $\sigma(s, \boldsymbol{\theta})$:
+
+$$
+\pi(a | s, \boldsymbol{\theta}) = \frac{1}{\sqrt{2\pi \sigma(s, \boldsymbol{\theta})^2}} \exp\left( -\frac{(a - \mu(s, \boldsymbol{\theta}))^2}{2\sigma(s, \boldsymbol{\theta})^2} \right)
+$$
+
+- $\mu(s, \boldsymbol{\theta})$ and $\sigma(s, \boldsymbol{\theta})$ can be parameterized using function approximators (e.g., linear functions, neural networks).
+
+
+:::tip Advantages of Policy Parameterization
+
+Policy gradient methods offer several advantages over value-based methods:
+
+1. **Continuous Actions:** They naturally handle continuous action spaces by parameterizing the policy over continuous variables.
+2. **Stochastic Policies:** They can represent stochastic policies, which may be optimal in certain settings where deterministic policies cannot achieve the best performance due to function approximation limitations.
+3. **Autonomous Exploration:** The agent can adjust its policy to reduce exploration over time, converging to a deterministic policy if appropriate.
+4. **Simpler Policies:** In some problems, the optimal policy may be simpler than the optimal value function, making direct policy learning more efficient.
+:::
+
+## The Objective for Learning Policies
+
+To learn a parameterized policy $\pi(a | s, \boldsymbol{\theta})$, we need to define an objective function that quantifies the performance of the policy. A common objective is the **expected return**.
+
+### Expected Return Objective
+
+For continuing tasks, we can define the average reward per time step under policy $\pi$:
+
+$$
+\rho(\boldsymbol{\theta}) = \sum_{s \in \mathcal{S}} \mu(s) \sum_{a \in \mathcal{A}(s)} \pi(a | s, \boldsymbol{\theta}) \sum_{s' \in \mathcal{S}} P(s' | s, a) R(s, a, s')
+$$
+
+- $\mu(s)$ is the stationary distribution over states induced by policy $\pi$.
+- $P(s' | s, a)$ is the transition probability from state $s$ to $s'$ given action $a$.
+- $R(s, a, s')$ is the expected reward when transitioning from $s$ to $s'$ using action $a$.
+
+Our goal is to find $\boldsymbol{\theta}^*$ that maximizes $\rho(\boldsymbol{\theta})$:
+
+$$
+\boldsymbol{\theta}^* = \arg\max_{\boldsymbol{\theta}} \rho(\boldsymbol{\theta})
+$$
+
+### Policy Gradient Approach
+
+We can use gradient ascent to find $\boldsymbol{\theta}^*$:
+
+$$
+\boldsymbol{\theta}_{k+1} = \boldsymbol{\theta}_k + \alpha \nabla_\theta \rho(\boldsymbol{\theta}_k)
+$$
+
+- $\alpha$ is the learning rate.
+- $\nabla_\theta \rho(\boldsymbol{\theta})$ is the gradient of the expected return with respect to the policy parameters.
+
+However, computing $\nabla_\theta \rho(\boldsymbol{\theta})$ directly is challenging due to the dependence of $\mu(s)$ on $\boldsymbol{\theta}$.
+
+## The Policy Gradient Theorem
+
+The **Policy Gradient Theorem** provides a way to compute the gradient $\nabla_\theta \rho(\boldsymbol{\theta})$ without needing to differentiate $\mu(s)$.
+
+For any differentiable policy $\pi(a | s, \boldsymbol{\theta})$, the gradient of the expected return is:
+
+$$
+\nabla_\theta \rho(\boldsymbol{\theta}) = \sum_{s \in \mathcal{S}} \mu(s) \sum_{a \in \mathcal{A}(s)} \nabla_\theta \pi(a | s, \boldsymbol{\theta}) q_\pi(s, a)
+$$
+
+- $q_\pi(s, a)$ is the action-value function under policy $\pi$.
+
+Moreover, using the identity $\nabla_\theta \pi(a | s, \boldsymbol{\theta}) = \pi(a | s, \boldsymbol{\theta}) \nabla_\theta \ln \pi(a | s, \boldsymbol{\theta})$, we can write:
+
+$$
+\nabla_\theta \rho(\boldsymbol{\theta}) = \sum_{s \in \mathcal{S}} \mu(s) \sum_{a \in \mathcal{A}(s)} \pi(a | s, \boldsymbol{\theta}) \nabla_\theta \ln \pi(a | s, \boldsymbol{\theta}) q_\pi(s, a)
+$$
+
+
+- This expression allows us to estimate the gradient using samples collected while following policy $\pi$.
+- The dependence of $\mu(s)$ on $\boldsymbol{\theta}$ cancels out, simplifying the computation.
+- The gradient consists of an expectation over states and actions encountered under the policy.
+
+## Estimating the Policy Gradient
+
+Since $\mu(s)$ and $\pi(a | s, \boldsymbol{\theta})$ define the distribution over states and actions encountered while following policy $\pi$, we can estimate the gradient using samples $(S_t, A_t, R_{t+1})$:
+
+$$
+\hat{\nabla}_\theta \rho(\boldsymbol{\theta}) = \nabla_\theta \ln \pi(A_t | S_t, \boldsymbol{\theta}) \hat{q}(S_t, A_t)
+$$
+
+- $\hat{q}(S_t, A_t)$ is an estimate of $q_\pi(S_t, A_t)$.
+- We can use Monte Carlo returns or bootstrapped estimates to approximate $q_\pi(S_t, A_t)$.
+
+:::info Reinforce: Monte-Carlo Policy-Gradient Control (episodic)
+$$
+\begin{align*}
+
+&\textbf{Input:}\text{ a differentiable policy parameterization } \pi(a|s,\bm{\theta}) \\
+&\textbf{Algorithm parameter:}\text{ step size } \alpha > 0 \\
+&\textbf{Initialize:} \text{ policy parameter } \bm{\theta} \in \mathbb{R}^{d'} \text{(e.g., to \textbf{0})}\\[1em]
+
+&\textbf{Loop forever (for each episode):} \\
+&\qquad \textbf{Generate an episode }\\
+&\qquad\quad S_0, A_0, R_1, \cdots, S_{T-1}, A_{T-1}, R_T, \text{following } \pi(\cdot|\cdot,\bm{\theta}) \\
+&\qquad \textbf{Loop for each } \text{step of episode } t=0,1, \cdots, T-1:\\
+
+&\qquad\qquad G \leftarrow \textstyle \sum^T_{k=t+1} \gamma^{k-t-1}R_k\\
+&\qquad\qquad \bm{\theta} \leftarrow \bm{\theta} + \alpha \gamma^t G \nabla \ln \pi(A_t|S_t, \bm{\theta})
+\end{align*}
+$$
+:::
+
+### Baselines to Reduce Variance
+
+Subtracting a **baseline** from the estimated action-value does not introduce bias but can reduce variance:
+
+$$
+\hat{\nabla}_\theta \rho(\boldsymbol{\theta}) = \nabla_\theta \ln \pi(A_t | S_t, \boldsymbol{\theta}) [\hat{q}(S_t, A_t) - b(S_t)]
+$$
+
+- $b(S_t)$ can be the estimated state-value $v_\pi(S_t)$.
+- Using the TD error $\delta_t$ simplifies the computation.
+
+:::info Reinforce with Baseline (episodic)
+$$
+\begin{align*}
+
+&\textbf{Input:}\text{ a differentiable policy parameterization } \pi(a|s,\bm{\theta}) \\
+&\textbf{Input:}\text{ a differentiable state-value function parameterization } \hat{v}(s,\bm{\textbf{w}}) \\
+&\textbf{Algorithm parameter:}\text{ step size } \alpha^{\bm{\theta}} > 0, \alpha^{\bm{\textbf{w}}} > 0 \\
+&\textbf{Initialize:} \text{ policy parameter } \bm{\theta} \in \mathbb{R}^{d'} \text{ and} \\
+&\quad \text{ state-value weights } \textbf{w} \in \mathbb{R}^d \text{(e.g., to \textbf{0})}\\[1em]
+
+&\textbf{Loop forever (for each episode):} \\
+&\qquad \textbf{Generate an episode }\\
+&\qquad\quad S_0, A_0, R_1, \cdots, S_{T-1}, A_{T-1}, R_T, \text{following } \pi(\cdot|\cdot,\bm{\theta}) \\
+&\qquad \textbf{Loop for each } \text{step of episode } t=0,1, \cdots, T-1:\\
+
+&\qquad\qquad G \leftarrow \textstyle \sum^T_{k=t+1} \gamma^{k-t-1}R_k\\
+&\qquad\qquad \delta \leftarrow G - \hat{v}(S_t, \textbf{w})\\
+&\qquad\qquad \textbf{w} \leftarrow \textbf{w} + \alpha^{\textbf{w}} \delta \nabla \hat{v}(S_t, \textbf{w})\\
+&\qquad\qquad \bm{\theta} \leftarrow \bm{\theta} + \alpha^{\bm{\theta}} \gamma^t \delta \nabla \ln \pi(A_t|S_t, \bm{\theta})
+\end{align*}
+$$
+:::
+
+## Actor-Critic Methods
+
+**Actor-Critic** methods combine policy gradient updates (the **actor**) with value function approximation (the **critic**) to estimate $q_\pi(s, a)$ or $v_\pi(s)$.
+
+- **Actor:** The policy $\pi(a | s, \boldsymbol{\theta})$ that selects actions and is updated in the direction suggested by the critic.
+- **Critic:** Estimates the value function $v_\pi(s)$ or $q_\pi(s, a)$, used to evaluate the actions taken by the actor.
+
+:::tip Advantages
+
+- **Stability:** The critic provides a baseline for the actor, reducing variance in the updates.
+- **Efficiency:** Learning both the policy and value function can lead to faster convergence.
 :::
 
 ## Recap
 
 In this chapter, we've covered:
 
+- **Policy Gradient Methods:** Learning policies directly by optimizing a parameterized policy.
+- **Advantages of Policy Parameterization:** Handling continuous actions, stochastic policies, autonomous exploration, and simpler policies.
+- **Policy Gradient Theorem:** Providing a way to compute the gradient of the expected return without needing to differentiate the state distribution.
+- **Estimating the Policy Gradient:** Using samples and the score function to estimate the gradient.
+- **Actor-Critic Methods:** Combining policy gradient updates with value function approximation to improve learning efficiency.
