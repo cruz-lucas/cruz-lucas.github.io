@@ -15,7 +15,7 @@ In this chapter, you'll learn about:
 - **Generalized Policy Iteration (GPI):** A framework that combines evaluation and improvement steps.
 :::
 
-Dynamic Programming (DP) is a class of algorithms used to solve finite **Markov Decision Processes (MDPs)** when we have access to a model of the environment's dynamics. DP methods make use of the **Bellman equations** defined in the [previous chapter](rl-intro-mdp#bellman-equations) to iteratively compute value functions and derive optimal policies. In this chapter, we'll explore how DP techniques address the tasks of **policy evaluation** and **policy control**.
+Dynamic Programming (DP) is a class of algorithms used to solve finite **Markov Decision Processes (MDPs)** when we have access to a model of the environment's dynamics. DP methods make use of the **Bellman equations** defined in the [previous chapter](mdp#bellman-equations) to iteratively compute value functions and derive optimal policies. In this chapter, we'll explore how DP techniques address the tasks of **policy evaluation** and **policy control**.
 
 ## Policy Evaluation (Prediction)
 
@@ -69,7 +69,7 @@ We can visualize the propagation of values in a simple 4x4 grid world in the sim
 
 - All state values are initialized to zero.
 - The agent moves in four possible directions (up, down, left, right), and if it bumps into a wall, it stays in place.
-- The agent follows an optimal policy (defined in the [previous chapter](rl-intro-mdp#policies-and-value-functions)).
+- The agent follows an optimal policy (defined in the [previous chapter](mdp#policies-and-value-functions)).
 - The noise parameter is the probability of the agent taking a suboptimal action.
 - In this example, we don't verify convergence. We'll run it for a predefined number of steps.
 
