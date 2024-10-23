@@ -1,0 +1,57 @@
+---
+title: 7.2 On-policy Control
+sidebar_position: 2
+slug: /rl/intro/func-approx/control
+---
+
+## On-policy Control with Function Approximation
+
+### Episodic Sarsa with Function Approximation
+
+To perform control with function approximation, we need to estimate action-value functions $\hat{q}(s, a, \mathbf{w})$:
+
+- **Action-Dependent Features**: Extend state features to include actions, often by stacking features for each action.
+- **Episodic Sarsa**: Uses the semi-gradient method to update action-value estimates based on the TD error.
+
+### Expected Sarsa and Q-Learning with Function Approximation
+
+- **Expected Sarsa**: Updates action-value estimates using the expected value under the policy.
+- **Q-Learning**: Uses the maximum estimated action value for the next state in its update (off-policy learning).
+
+### Exploration under Function Approximation
+
+Exploration strategies need to be adapted for function approximation:
+
+- **Optimistic Initialization**: Can be challenging due to generalization; initial optimism may decay quickly.
+- **Epsilon-Greedy**: Still applicable; selects random actions with probability $\epsilon$ to encourage exploration.
+
+## Average Reward in Control Problems
+
+### Average Reward Objective
+
+In continuing tasks, instead of maximizing the discounted return, we can aim to maximize the **average reward** per time step:
+
+$$
+\rho(\pi) = \lim_{H \to \infty} \frac{1}{H} \mathbb{E} \left[ \sum_{t=1}^H R_t \middle| \pi \right]
+$$
+
+This formulation treats future rewards equally, avoiding the need for a discount factor.
+
+### Differential Value Functions
+
+To apply RL methods in the average reward setting, we define **differential value functions**:
+
+$$
+v_\pi(s) = \mathbb{E}_\pi \left[ \sum_{t=0}^\infty \left( R_{t} - \rho(\pi) \right) \middle| S_0 = s \right]
+$$
+
+Differential value functions measure the relative value of states compared to the average reward.
+
+### Differential Sarsa Algorithm
+
+An example control algorithm in this setting is **Differential Sarsa**:
+
+1. **Estimate Average Reward**: Maintain an estimate $\bar{R}$ of the average reward.
+2. **TD Error**: Compute $\delta_t = R_{t+1} - \bar{R} + \hat{q}(S_{t+1}, A_{t+1}, \mathbf{w}) - \hat{q}(S_t, A_t, \mathbf{w})$.
+3. **Update Weights**: Adjust $\mathbf{w}$ using the TD error.
+4. **Update Average Reward Estimate**: Incrementally update $\bar{R}$ based on observed rewards.

@@ -1,0 +1,129 @@
+---
+title: 7.1 On-policy Prediction
+sidebar_position: 1
+slug: /rl/intro/func-approx/pred
+---
+
+# On-policy Prediction with Function Approximation
+
+### Gradient Descent Methods
+
+We can minimize the MSVE using gradient descent. The gradient of the MSVE with respect to $\mathbf{w}$ is:
+
+$$
+\nabla \overline{\text{VE}}(\mathbf{w}) = -2 \sum_{s \in \mathcal{S}} \mu(s) \left[ v_\pi(s) - \hat{v}(s, \mathbf{w}) \right] \nabla \hat{v}(s, \mathbf{w})
+$$
+
+In practice, we use **stochastic gradient descent** by sampling states $s$ from $\mu(s)$ and updating $\mathbf{w}$ incrementally.
+
+:::info Gradient Monte Carlo Algorithm
+$$
+\begin{align*}
+&\textbf{Input:} \text{ the policy } \pi \text{ to be evaluated} \\
+&\textbf{Input:} \text{ a differentiable function  } \hat{v}: \mathcal{S} \times \mathbb{R}^d \rightarrow \mathbb{R}\\
+&\textbf{Algorithm parameter:} \text{ step size } \alpha > 0\\
+&\textbf{Initialize} \text{ value-function weights } \textbf{w} \in \mathbb{R}^d \text{ arbitrarily } (\text{e.g.},\textbf{w}=0)\\[1em]
+
+&\textbf{Loop forever (for each episode):} \\
+&\qquad \textbf{Generate } \text{an episode following } \pi: \\
+&\qquad\quad S_0, A_0, R_1, S_1, A_1, R_2, \cdots, S_{T-1}, A_{T-1}, R_T, S_T \\
+&\qquad \textbf{Loop for each } \text{step of episode, } t=0,1, \cdots, T-2,T-1:\\
+
+&\qquad\qquad \mathbf{w} \leftarrow \mathbf{w} + \alpha \left[ G_t - \hat{v}(s, \mathbf{w}) \right] \nabla \hat{v}(s, \mathbf{w})
+\end{align*}
+$$
+:::
+
+
+### Semi-Gradient TD for Policy Evaluation
+
+**Semi-Gradient TD** updates the value function approximation using the TD error but treats the target as a constant with respect to the weights when computing gradients:
+
+$$
+\mathbf{w} \leftarrow \mathbf{w} + \alpha \delta_t \nabla \hat{v}(S_t, \mathbf{w})
+$$
+
+- **TD Error**: $\delta_t = R_{t+1} + \gamma \hat{v}(S_{t+1}, \mathbf{w}) - \hat{v}(S_t, \mathbf{w})$
+- The method is called "semi-gradient" because it ignores the dependency of the target on $\mathbf{w}$ during differentiation.
+
+:::info Semi-Gradient TD(0) Algorithm
+$$
+\begin{align*}
+&\textbf{Input:} \text{ the policy } \pi \text{ to be evaluated} \\
+&\textbf{Input:} \text{ a differentiable function  } \hat{v}: \mathcal{S}^+ \times \mathbb{R}^d \rightarrow \mathbb{R},\\
+&\quad \text{such that } \hat{v}(\text{terminal}, \cdot) = 0\\
+&\textbf{Algorithm parameter:} \text{ step size } \alpha > 0\\
+&\textbf{Initialize} \text{ value-function weights } \textbf{w} \in \mathbb{R}^d \text{ arbitrarily } (\text{e.g.},\textbf{w}=0)\\[1em]
+
+&\textbf{Loop for each episode:} \\
+&\qquad \textbf{Initialize } S\\
+&\qquad \textbf{Loop for each } \text{step of episode}:\\
+
+&\qquad\qquad \textbf{Choose } A \sim \pi(\cdot|S)\\
+&\qquad\qquad \textbf{Take action } A, \text{ observe } R,S'\\
+&\qquad\qquad \mathbf{w} \leftarrow \mathbf{w} + \alpha \left[ R + \gamma \hat{v}(S', \textbf{w}) - \hat{v}(s, \mathbf{w}) \right] \nabla \hat{v}(s, \mathbf{w})\\
+&\qquad\qquad S \leftarrow S'\\
+&\qquad \textbf{until } S \text{ is terminal}\\
+
+\end{align*}
+$$
+:::
+
+#### TD vs. Monte Carlo with Function Approximation
+
+- **Bias and Variance**: TD methods introduce bias due to bootstrapping but have lower variance compared to Monte Carlo methods.
+- **Convergence**: TD learning with function approximation does not minimize the MSVE directly. Instead, it converges to a fixed point that minimizes the **Projected Bellman Error**. The difference between the TD fixed point and the MSVE minimum is given by:
+
+$$
+\overline{VE}(\textbf{w}_{TD}) \le \frac{1}{1-\gamma} \min_{\textbf{w}} \overline{VE}(\textbf{w})
+$$
+
+{/* ### The Linear TD Update
+
+With linear function approximation, the TD update simplifies:
+
+$$
+\mathbf{w} \leftarrow \mathbf{w} + \alpha \delta_t \mathbf{x}(S_t)
+$$
+
+This update adjusts the weights in the direction of the feature vector scaled by the TD error.
+ */}
+
+
+## Neural Networks for Function Approximation
+
+A **neural network** is a parameterized function composed of layers of interconnected nodes (neurons):
+
+- **Input Layer**: Receives the input data (state representation).
+- **Hidden Layers**: Perform transformations using weights and activation functions.
+- **Output Layer**: Produces the final output (e.g., value estimate).
+
+Each neuron computes a weighted sum of its inputs and passes the result through an activation function (e.g., ReLU, sigmoid).
+
+Neural networks can approximate complex, non-linear functions, making them suitable for high-dimensional or continuous state spaces. They can learn useful representations (features) from raw inputs.
+
+### Deep Neural Networks
+
+**Deep neural networks** have multiple hidden layers, allowing for hierarchical feature learning:
+
+- **Composition**: Each layer learns features based on the previous layer's output.
+- **Abstraction**: Deeper layers can capture higher-level abstractions.
+
+Deep networks can model intricate patterns but may require more data and careful training.
+
+### Training Neural Networks
+
+Training a neural network involves minimizing a loss function (e.g., mean squared error) by adjusting the weights using gradient descent:
+
+1. **Forward Pass**: Compute the network's output for a given input.
+2. **Compute Loss**: Calculate the loss between the predicted output and the target.
+3. **Backward Pass (Backpropagation)**: Compute gradients of the loss with respect to each weight.
+4. **Update Weights**: Adjust the weights in the direction that minimizes the loss.
+
+The **backpropagation** algorithm efficiently computes gradients using the chain rule.
+
+Training deep networks can be challenging due to issues like vanishing gradients and local minima. Several strategies help improve training:
+
+- **Weight Initialization**: Initialize weights carefully to break symmetry and maintain appropriate activation variances.
+- **Momentum**: Use momentum in gradient updates to accelerate convergence and escape shallow minima.
+- **Adaptive Learning Rates**: Methods like AdaGrad, RMSProp, and Adam adjust learning rates for each weight individually based on past gradients.

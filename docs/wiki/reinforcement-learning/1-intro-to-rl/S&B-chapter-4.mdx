@@ -1,7 +1,7 @@
 ---
 title: 3. Dynamic Programming
 sidebar_position: 3
-slug: /rl-intro-dp
+slug: /rl/intro/dp
 ---
 import { PlayableGrid, StaticGrid, AnimationGrid } from '@site/src/components/RL/Grid'; 
 
@@ -12,7 +12,7 @@ In this chapter, you'll learn about:
 - **Policy Evaluation:** Estimating the value function for a given policy.
 - **Policy Improvement:** Finding better policies using value functions.
 - **Policy Iteration:** Alternating between policy evaluation and improvement to find optimal policies.
-- **Generalized Policy Iteration (GPI):** A flexible framework that combines evaluation and improvement steps.
+- **Generalized Policy Iteration (GPI):** A framework that combines evaluation and improvement steps.
 :::
 
 Dynamic Programming (DP) is a class of algorithms used to solve finite **Markov Decision Processes (MDPs)** when we have access to a model of the environment's dynamics. DP methods make use of the **Bellman equations** defined in the [previous chapter](rl-intro-mdp#bellman-equations) to iteratively compute value functions and derive optimal policies. In this chapter, we'll explore how DP techniques address the tasks of **policy evaluation** and **policy control**.

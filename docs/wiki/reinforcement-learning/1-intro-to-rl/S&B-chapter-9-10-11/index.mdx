@@ -1,0 +1,128 @@
+---
+title: 7. Prediction and Control with Function Approximation
+sidebar_position: 7
+slug: /rl/intro/func-approx
+---
+
+# Prediction and Control with Function Approximation
+
+:::info
+In this chapter, you'll learn about:
+
+- **Function Approximation in Reinforcement Learning**: Using parameterized functions to estimate value functions in large or continuous state spaces.
+- **Gradient Descent and Semi-Gradient Methods**: Techniques to optimize the parameters of value function approximations.
+- **Feature Construction Techniques**: Methods like coarse coding and tile coding to create features for linear function approximation.
+- **Control with Function Approximation**: Extending control methods like Sarsa, Expected Sarsa, and Q-Learning to work with function approximators for policy improvement.
+- **Exploration Strategies**: Adapting exploration methods such as epsilon-greedy and optimistic initialization for function approximation settings.
+- **Average Reward Formulation**: Introducing the average reward criterion as an alternative to discounted returns in continuing tasks.
+:::
+
+In previous chapters, we explored tabular solution methods for reinforcement learning, including Dynamic Programming (DP), Monte Carlo (MC) methods, and Temporal-Difference (TD) learning. These methods allowed us to compute value functions and optimal policies by maintaining a table of values for each state or state-action pair. While effective for environments with small, discrete state spaces, tabular methods become impractical as the size or complexity of the state space increases. For example, a robot navigating using camera images cannot store a value for every possible image it might encounter.
+
+To handle such scenarios, we introduce **function approximation**, where we use parameterized functions to estimate value functions. Function approximation allows us to generalize from seen states to unseen ones, enabling RL agents to operate in large or continuous state spaces.
+
+This chapter explores prediction and control using function approximation. We will discuss various function approximators, including linear methods and neural networks, and how they can be applied to policy evaluation and control tasks.
+
+## Moving to Parameterized Functions
+
+In tabular methods, we store a value for each state in a table. However, this approach doesn't scale to large or continuous state spaces. To overcome this limitation, we use parameterized functions that map states to value estimates. These functions are controlled by a set of weights or parameters that we adjust during learning.
+
+For example, in a grid world, instead of storing a value for each position, we can use a function that computes the value based on the state's coordinates:
+
+$$
+\hat{v}(s, \mathbf{w}) = w_1 x + w_2 y
+$$
+
+Here, $x$ and $y$ are the coordinates of state $s$, and $w_1$ and $w_2$ are weights that we adjust during learning.
+
+### Linear Function Approximation
+
+In linear function approximation, the value estimate is a linear combination of features:
+
+$$
+\hat{v}(s, \mathbf{w}) = \mathbf{w}^\top \mathbf{x}(s)
+$$
+
+- $\mathbf{x}(s)$ is the feature vector for state $s$.
+- $\mathbf{w}$ is the weight vector.
+
+The features $\mathbf{x}(s)$ are functions that extract relevant information from the state. The choice of features significantly impacts the approximation's quality.
+
+:::tip Tabular Representation as a Special Case
+
+Tabular value functions can be seen as a special case of linear function approximation. Each state $s$ has a unique feature vector $\mathbf{x}(s)$ where all elements are zero except for one element corresponding to state $s$, which is one. This is known as a **one-hot encoding**.
+:::
+
+### Non-Linear Function Approximation
+
+Beyond linear functions, we can use non-linear function approximators like neural networks. Neural networks can capture complex patterns and relationships in the data, making them suitable for high-dimensional or continuous state spaces.
+
+## Value Estimation as Supervised Learning
+
+We can frame the policy evaluation task as a supervised learning (SL) problem. In this context:
+
+- **Inputs**: States $s$.
+- **Targets**: Estimates of the expected return $G_t$ from state $s$.
+
+We aim to learn a function $\hat{v}(s, \mathbf{w})$ that maps states to value estimates by minimizing the difference between the predicted values and the target returns.
+
+While the framing is similar to SL, there are key differences:
+
+- **Online Learning**: In RL, data is generated sequentially as the agent interacts with the environment, requiring online updating.
+- **Non-Stationary Targets**: Targets in RL are often estimates themselves (e.g., bootstrap targets in Temporal-Difference learning), which change as the value function updates.
+- **Temporal Correlation**: Data collected in RL is temporally correlated, violating the assumption of independent and identically distributed (i.i.d.) data common in supervised learning.
+
+### Mean Squared Value Error Objective
+
+To formalize the learning objective, we define the **Mean Squared Value Error (MSVE)**:
+
+$$
+\overline{\text{VE}}(\mathbf{w}) \doteq \sum_{s \in \mathcal{S}} \mu(s) \left( v_\pi(s) - \hat{v}(s, \mathbf{w}) \right)^2
+$$
+
+- $\mu(s)$ is the state distribution under policy $\pi$.
+- $v_\pi(s)$ is the true value function.
+- $\hat{v}(s, \mathbf{w})$ is the approximate value function.
+
+## Feature Construction for Linear Methods
+
+### State Aggregation
+
+**State aggregation** groups similar states together and represents them with shared features. This reduces the number of parameters and introduces generalization across states within the same group.
+
+### Coarse Coding
+
+**Coarse coding** is a form of function approximation where features are activated over broad regions of the state space, often with overlapping receptive fields.
+
+- **Features**: Each feature corresponds to a region in the state space (e.g., a circle or rectangle).
+- **Activation**: A feature is active if the current state falls within its receptive field.
+
+Coarse coding allows for both generalization (through overlapping features) and discrimination (by having multiple features with different receptive fields).
+
+### Tile Coding
+
+**Tile coding** is a computationally efficient form of coarse coding that uses multiple overlapping grids (tilings) to partition the state space.
+
+- **Tilings**: Each tiling covers the state space with non-overlapping tiles.
+- **Offsets**: Each tiling is slightly offset from others to create unique intersections.
+- **Features**: A state activates one tile per tiling.
+
+Tile coding provides a fixed, sparse representation that's efficient to compute and works well with linear function approximation.
+
+### Generalization
+
+**Generalization** refers to the ability of the function approximator to apply knowledge learned from specific states to similar, unseen states. Generalization can speed up learning by reducing the amount of experience needed to learn accurate value estimates.
+
+For example, a robot that learns to navigate in one room should be able to generalize that knowledge to navigate in similar rooms without starting from scratch.
+
+### Discrimination
+
+**Discrimination** is the ability to distinguish between different states and assign them different value estimates. While generalization is beneficial, too much generalization can prevent the agent from accurately estimating the value of distinct states.
+
+Ideally, we want a function approximator that provides both good generalization and good discrimination. However, there is often a trade-off between the two. The choice of features and the structure of the function approximator play crucial roles in achieving the right balance.
+
+The shape, size, and overlap of receptive fields of coarse and tile coding affect generalization and discrimination:
+
+- **Larger Receptive Fields**: More generalization but less discrimination.
+- **Smaller Receptive Fields**: Less generalization but more discrimination.
+- **Overlap/offset**: Allows for smoother generalization across states.
